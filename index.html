@@ -44,7 +44,7 @@
 
     getNearbyBluetooth =()=>{
         if ('bluetooth' in navigator) {
-            navigator.bluetooth.requestDevice()
+            navigator.bluetooth.requestDevice({ filters: [{ services: ['battery_service'] }] })
             .then((device)=>{
                 console.log(device.name)
             })
