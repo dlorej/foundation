@@ -6,7 +6,8 @@
     <title>Document</title>
 </head>
 <body>
-    <div id="div1">hello</div>
+    <div id="div1">abcde</div>
+    <div id="div2">fghij</div>
     <button onclick = getLocation()>get location</button>
 </body>
 <script>
@@ -16,6 +17,15 @@
     showPosition =(position)=>{
         const targetDiv = document.getElementById("div1")
         targetDiv.innerHTML = position.coords.latitude + " " + position.coords.longitude
+    }
+    getIPaddress =()=>{
+        fetch("https://api.ipify.org")
+            .then((res)=>res.text())
+            .then((ip)=>{
+                const targetDiv = document.getElementById("div2")
+                targetDiv.innerHTML = ip
+            }        
+        )
     }
 </script>
 </html>
