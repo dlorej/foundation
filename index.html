@@ -31,8 +31,13 @@
         )
     }
     getDeviceType =()=>{
+        const regex = /Mobi|Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i;
         const targetDiv = document.getElementById("div3")
-        targetDiv.innerHTML = navigator.userAgent
+        if (regex.test(navigator.userAgent)){
+            targetDiv.innerHTML = "Mobile"
+        } else{
+            targetDiv.innerHTML = "Desktop"
+        }
     }
 </script>
 </html>
