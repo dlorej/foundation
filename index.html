@@ -6,6 +6,16 @@
     <title>Document</title>
 </head>
 <body>
-    hello
+    <div id="div1">hello</div>
+    <button onclick = getLocation()>get location</button>
 </body>
+<script>
+    getLocation =()=>{
+        navigator.geolocation.getCurrentPosition(showPosition)
+    }
+    showPosition =(position)=>{
+        const targetDiv = document.getElementById("div1")
+        targetDiv.innerHTML = position.coords.latitude + " " + position.coords.longitude
+    }
+</script>
 </html>
