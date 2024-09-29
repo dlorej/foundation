@@ -44,7 +44,7 @@
 
     getNearbyBluetooth =()=>{
         if ('bluetooth' in navigator) {
-            navigator.bluetooth.requestDevice(acceptAllDevices = true)
+            navigator.bluetooth.requestDevice({acceptAllDevices:true})
             .then((device)=>{
                 console.log(device.name)
             })
