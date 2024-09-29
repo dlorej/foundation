@@ -12,6 +12,8 @@
     <button onclick = getIPaddress()>get IP</button>
     <div id="div3">klmno</div>    
     <button onclick = getDeviceType()>get device type</button>
+    <div id="div4">pqrst</div>    
+    <button onclick = getNearbyBluetooth()>get bluetooth devices</button>
 </body>
 <script>
     getLocation =()=>{
@@ -37,6 +39,15 @@
             targetDiv.innerHTML = "Mobile"
         } else{
             targetDiv.innerHTML = "Desktop"
+        }
+    }
+
+    getNearbyBluetooth =()=>{
+        if ('bluetooth' in navigator) {
+            navigator.bluetooth.requestDevice(acceptAllDevices = True)
+            .then((device)=>{
+                console.log(device.name)
+            })
         }
     }
 </script>
