@@ -8,7 +8,9 @@
 <body>
     <div id="div1">abcde</div>
     <div id="div2">fghij</div>
+    <div id="div3">klmno</div>
     <button onclick = getLocation()>get location</button>
+    <button onclick = getIPaddress()>get IP</button>\
     <button onclick = getIPaddress()>get IP</button>
 </body>
 <script>
@@ -27,6 +29,10 @@
                 targetDiv.innerHTML = ip
             }        
         )
+    }
+    getDeviceType =()=>{
+        const targetDiv = document.getElementById("div3")
+        targetDiv.innerHTML = navigator.userAgent
     }
 </script>
 </html>
