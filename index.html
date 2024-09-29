@@ -12,8 +12,6 @@
     <button onclick = getIPaddress()>get IP</button>
     <div id="div3">klmno</div>    
     <button onclick = getDeviceType()>get device type</button>
-    <div id="div4">pqrst</div>    
-    <button onclick = getNearbyBluetooth()>get bluetooth devices</button>
 </body>
 <script>
     getLocation =()=>{
@@ -21,7 +19,7 @@
     }
     showPosition =(position)=>{
         const targetDiv = document.getElementById("div1")
-        targetDiv.innerHTML = position.coords.latitude + " " + position.coords.longitude
+        targetDiv.innerHTML = position.coords.latitude + " " + position.coords.longitude + " " + position.coords.altitude
     }
     getIPaddress =()=>{
         fetch("https://api.ipify.org")
@@ -42,13 +40,5 @@
         }
     }
 
-    getNearbyBluetooth =()=>{
-        if ('bluetooth' in navigator) {
-            navigator.bluetooth.requestDevice({ filters: [{ services: ['battery_service'] }] })
-            .then((device)=>{
-                console.log(device.name)
-            })
-        }
-    }
 </script>
 </html>
