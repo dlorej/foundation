@@ -28,5 +28,12 @@
         "purpose": "maskable"
       }
     ],
+    "screenshots":[
+      {
+        "src": "screenshots/ss.png",
+        "sizes":"720x1280",
+        "type": "image/png"
+    }
+    ],
     "display": "standalone"
   }
