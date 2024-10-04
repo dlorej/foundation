@@ -30,9 +30,15 @@
     ],
     "screenshots":[
       {
-        "src": "screenshots/ss.png",
+        "src": "screenshots/ss_narrow.png",
         "sizes":"720x1280",
         "type": "image/png"
+    },
+    {
+      "src": "screenshots/ss_wide.png",
+      "sizes":"1280x720",
+      "type": "image/png",
+      "form_factor": "wide"
     }
     ],
     "display": "standalone"
