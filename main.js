@@ -22,7 +22,8 @@ function drawWalls() {
 
 // Draw the circle
 function drawCircle() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear the canvas
+    drawWalls(); // Draw the walls first
     ctx.beginPath();
     ctx.arc(x, y, radius, 0, Math.PI * 2, false);
     ctx.fillStyle = 'blue';
