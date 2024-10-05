@@ -53,7 +53,8 @@ function handleOrientation(event) {
     const tiltX = event.gamma;  // left-right tilt (-90 to 90)
     const tiltY = event.beta;   // forward-backward tilt (-180 to 180)
 
-    prev_x, prev_y = x,y
+    let prev_x = x
+    let prev_y = y
 
     // Update the circle's position based on the tilt
     x += tiltX * speed;
@@ -65,10 +66,11 @@ function handleOrientation(event) {
     if (y - radius < 0) y = radius;
     if (y + radius > canvas.height) y = canvas.height - radius;
 
-    if (!checkCollision(x, y)) {
+    if (checkCollision(x, y)) {
         drawCircle();
     } else{
         x, y = prev_x,prev_y
+        drawCircle()
     }
 
     
