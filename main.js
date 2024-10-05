@@ -4,7 +4,7 @@ const ctx = canvas.getContext('2d');
 let x = canvas.width / 2;
 let y = canvas.height / 2;
 const radius = 20;
-const speed = 0.8;
+const speed = 1;
 
 const walls = [
     { x: 50, y: 50, width: 100, height: 20 },
