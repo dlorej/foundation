@@ -63,10 +63,10 @@ function handleOrientation(event) {
     if (y - radius < 0) y = radius;
     if (y + radius > canvas.height) y = canvas.height - radius;
 
-    if (!checkCollision(newX, newY)) {
-        x = newX;
-        y = newY;
-    }
+    // if (!checkCollision(newX, newY)) {
+    //     x = newX;
+    //     y = newY;
+    // }
 
     drawCircle();
 }
