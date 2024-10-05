@@ -33,17 +33,17 @@ function drawCircle() {
 
 function checkCollision(newX, newY) {
     // Loop through each wall and check if the circle would overlap with it
-    // for (let i = 0; i < walls.length; i++) {
-    //     const wall = walls[i];
-    //     if (
-    //         newX + radius > wall.x &&         // Circle's right edge > wall's left edge
-    //         newX - radius < wall.x + wall.width && // Circle's left edge < wall's right edge
-    //         newY + radius > wall.y &&         // Circle's bottom edge > wall's top edge
-    //         newY - radius < wall.y + wall.height  // Circle's top edge < wall's bottom edge
-    //     ) {
-    //         return true; // Collision detected
-    //     }
-    // }
+    for (let i = 0; i < walls.length; i++) {
+        const wall = walls[i];
+        if (
+            newX + radius > wall.x &&         // Circle's right edge > wall's left edge
+            newX - radius < wall.x + wall.width && // Circle's left edge < wall's right edge
+            newY + radius > wall.y &&         // Circle's bottom edge > wall's top edge
+            newY - radius < wall.y + wall.height  // Circle's top edge < wall's bottom edge
+        ) {
+            return true; // Collision detected
+        }
+    }
     return false; // No collision
 }
 
@@ -52,6 +52,8 @@ function handleOrientation(event) {
     // Gamma (left-to-right tilt) and Beta (front-to-back tilt)
     const tiltX = event.gamma;  // left-right tilt (-90 to 90)
     const tiltY = event.beta;   // forward-backward tilt (-180 to 180)
+
+    prev_x, prev_y = x,y
 
     // Update the circle's position based on the tilt
     x += tiltX * speed;
@@ -63,12 +65,13 @@ function handleOrientation(event) {
     if (y - radius < 0) y = radius;
     if (y + radius > canvas.height) y = canvas.height - radius;
 
-    // if (!checkCollision(newX, newY)) {
-    //     x = newX;
-    //     y = newY;
-    // }
+    if (!checkCollision(x, y)) {
+        drawCircle();
+    } else{
+        x, y = prev_x,prev_y
+    }
 
-    drawCircle();
+    
 }
 
 // Initial circle draw
