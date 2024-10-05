@@ -77,7 +77,42 @@ function handleOrientation(event) {
 }
 
 // Initial circle draw
-drawCircle();
+// drawCircle();
 
 // Add event listener for device orientation
-window.addEventListener('deviceorientation', handleOrientation);
+// window.addEventListener('deviceorientation', handleOrientation);
+
+function updatePosition() {
+    if (keysPressed['ArrowUp']) {
+        y -= speed;
+    }
+    if (keysPressed['ArrowDown']) {
+        y += speed;
+    }
+    if (keysPressed['ArrowLeft']) {
+        x -= speed;
+    }
+    if (keysPressed['ArrowRight']) {
+        x += speed;
+    }
+    drawCircle();
+}
+
+// Event listeners for key press and release
+document.addEventListener('keydown', (e) => {
+    keysPressed[e.key] = true;
+});
+
+document.addEventListener('keyup', (e) => {
+    keysPressed[e.key] = false;
+});
+
+// Continuously update the circle's position (60 frames per second)
+function gameLoop() {
+    updatePosition();
+    requestAnimationFrame(gameLoop);
+}
+
+// Initial draw and start the loop
+drawCircle();
+gameLoop();
