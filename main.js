@@ -6,10 +6,12 @@ let y = canvas.height / 2;
 const radius = 20;
 const speed = 1;
 
+const keysPressed = {};
+
 const walls = [
-    { x: 50, y: 50, width: 100, height: 20 },
-    { x: 200, y: 150, width: 20, height: 100 },
-    { x: 100, y: 300, width: 150, height: 20 },
+    { x: 50, y: 50, width: 500, height: 10 },
+    { x: 200, y: 150, width: 10, height: 100 },
+    { x: 100, y: 300, width: 10, height: 200 },
 ];
 
 // Draw the walls
@@ -48,33 +50,28 @@ function checkCollision(newX, newY) {
 }
 
 // Handle device orientation changes
-function handleOrientation(event) {
-    // Gamma (left-to-right tilt) and Beta (front-to-back tilt)
-    const tiltX = event.gamma;  // left-right tilt (-90 to 90)
-    const tiltY = event.beta;   // forward-backward tilt (-180 to 180)
+// function handleOrientation(event) {
+//     // Gamma (left-to-right tilt) and Beta (front-to-back tilt)
+//     const tiltX = event.gamma;  // left-right tilt (-90 to 90)
+//     const tiltY = event.beta;   // forward-backward tilt (-180 to 180)
 
-    let prev_x = x
-    let prev_y = y
+//     // Update the circle's position based on the tilt
+//     let newX = x + tiltX * speed;
+//     let newY = y + tiltY * speed;
 
-    // Update the circle's position based on the tilt
-    x += tiltX * speed;
-    y += tiltY * speed;
+//     // Prevent the circle from going outside the canvas
+//     if (x - radius < 0) x = radius;
+//     if (x + radius > canvas.width) x = canvas.width - radius;
+//     if (y - radius < 0) y = radius;
+//     if (y + radius > canvas.height) y = canvas.height - radius;
 
-    // Prevent the circle from going outside the canvas
-    if (x - radius < 0) x = radius;
-    if (x + radius > canvas.width) x = canvas.width - radius;
-    if (y - radius < 0) y = radius;
-    if (y + radius > canvas.height) y = canvas.height - radius;
+//     if (!checkCollision(newX, newY)) {
+//         x = newX;
+//         y = newY;
+//     }
 
-    if (checkCollision(x, y)) {
-        drawCircle();
-    } else{
-        x, y = prev_x,prev_y
-        drawCircle()
-    }
-
-    
-}
+//     drawCircle();
+// }
 
 // Initial circle draw
 // drawCircle();
@@ -83,17 +80,23 @@ function handleOrientation(event) {
 // window.addEventListener('deviceorientation', handleOrientation);
 
 function updatePosition() {
+    let newX = x
+    let newY = y
     if (keysPressed['ArrowUp']) {
-        y -= speed;
+        newY = y - speed;
     }
     if (keysPressed['ArrowDown']) {
-        y += speed;
+        newY = y + speed;
     }
     if (keysPressed['ArrowLeft']) {
-        x -= speed;
+        newX = x - speed;
     }
     if (keysPressed['ArrowRight']) {
-        x += speed;
+        newX = x + speed;
+    }
+    if (!checkCollision(newX, newY)) {
+        x = newX;
+        y = newY;
     }
     drawCircle();
 }
