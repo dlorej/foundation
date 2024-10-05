@@ -33,17 +33,17 @@ function drawCircle() {
 
 function checkCollision(newX, newY) {
     // Loop through each wall and check if the circle would overlap with it
-    for (let i = 0; i < walls.length; i++) {
-        const wall = walls[i];
-        if (
-            newX + radius > wall.x &&         // Circle's right edge > wall's left edge
-            newX - radius < wall.x + wall.width && // Circle's left edge < wall's right edge
-            newY + radius > wall.y &&         // Circle's bottom edge > wall's top edge
-            newY - radius < wall.y + wall.height  // Circle's top edge < wall's bottom edge
-        ) {
-            return true; // Collision detected
-        }
-    }
+    // for (let i = 0; i < walls.length; i++) {
+    //     const wall = walls[i];
+    //     if (
+    //         newX + radius > wall.x &&         // Circle's right edge > wall's left edge
+    //         newX - radius < wall.x + wall.width && // Circle's left edge < wall's right edge
+    //         newY + radius > wall.y &&         // Circle's bottom edge > wall's top edge
+    //         newY - radius < wall.y + wall.height  // Circle's top edge < wall's bottom edge
+    //     ) {
+    //         return true; // Collision detected
+    //     }
+    // }
     return false; // No collision
 }
 
