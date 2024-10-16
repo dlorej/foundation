@@ -1,5 +1,8 @@
 {
   "devDependencies": {
     "pwa-asset-generator": "^6.3.2"
+  },
+  "dependencies": {
+    "cheerio": "^1.0.0"
   }
 }
