@@ -1,0 +1,1 @@
+create vercel api and databse, update building info on click
