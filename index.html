@@ -53,7 +53,7 @@
     //         }).addTo(main_map)})
     
     async function sendFn(){
-        const poly = '((1,1),(2,3),(4,3),(6,9))'
+        const poly = encodeURIComponent('((1,1),(2,3),(4,3),(6,9))')
         const state = 2
         const result = await fetch(
             `/api/upload?poly=${poly}&state=${state}`,
