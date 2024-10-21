@@ -3,6 +3,8 @@
     "pwa-asset-generator": "^6.3.2"
   },
   "dependencies": {
+    "@vercel/postgres": "^0.10.0",
     "cheerio": "^1.0.0"
-  }
+  },
+  "type": "module"
 }

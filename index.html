@@ -11,6 +11,7 @@
             height: 100.0%;
             left: 0.0%;
             top: 0.0%;
+            display:none Imp !important
         }
         .leaflet-container { font-size: 1rem; }
         .leaflet-control-attribution {
@@ -19,9 +20,8 @@
     </style>
 </head>
 <body>
-    
+    <button>press to send</button>
     <div class="folium-map" id="main_map" ></div>
-
 </body>
 <script>
     var main_map = L.map(
@@ -43,12 +43,18 @@
     tile_layer.addTo(main_map);
 
     fetch('./output_file.geojson').then(response => response.json())
-    .then(data => {L.geoJSON(data,
-        {
-            onEachFeature: function (feature, layer) {
-                layer.on('click', function () {
-                this.setStyle({ color: 'red', weight: 2 });
-                });
-            }
-        }).addTo(main_map)})
+        .then(data => {L.geoJSON(data,
+            {onEachFeature: function (feature, layer) {
+                    layer.on('click', function () {
+                    this.setStyle({ color: 'red', weight: 2 });
+                    });
+                }
+            }).addTo(main_map)})
+    
+    var sendFn = async() => {
+        const result = await fetch(
+                `/api/upload.js`,
+                {headers: { Accept: "*/*" }, method:"POST"})
+    }
+    
 </script>
