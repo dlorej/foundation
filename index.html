@@ -54,7 +54,7 @@
     
     async function sendFn(){
         const result = await fetch(
-            `/api/upload?num=11`,
+            `/api/upload?num='11'`,
             {headers: { Accept: "*/*" }, method:"POST"})
         const content2 = await result.json()
         document.getElementById("testdiv").innerHTML = content2
