@@ -18,5 +18,3 @@ export default async function function1(req,res){
         return res.status(500).json({message:"fail"})
     }
 }
-
-// console.log(function1())

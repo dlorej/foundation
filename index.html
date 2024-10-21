@@ -53,8 +53,10 @@
     //         }).addTo(main_map)})
     
     async function sendFn(){
+        const poly = [[1,1],[2,3],[4,3],[6,9]]
+        const state = 2
         const result = await fetch(
-            `/api/upload?num='11'`,
+            `/api/upload?poly=${poly}&state=${state}`,
             {headers: { Accept: "*/*" }, method:"POST"})
         const content2 = await result.json()
         document.getElementById("testdiv").innerHTML = content2["message"]
