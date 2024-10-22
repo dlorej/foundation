@@ -25,41 +25,41 @@
     <!-- <div class="folium-map" id="main_map" ></div> -->
 </body>
 <script>
-    // var main_map = L.map(
-    //     "main_map",
-    //     {
-    //         center: [1.3474574403155464, 103.68459204844389],
-    //         crs: L.CRS.EPSG3857,
-    //         maxBounds: [[1.3399, 103.6764], [1.3562, 103.6904]],
-    //         zoom: 20,
-    //         zoomControl: true,
-    //         preferCanvas: false,
-    //     }
-    // );
-    // var tile_layer = L.tileLayer(
-    //     "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
-    //     {"attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors", "detectRetina": false, "maxNativeZoom": 19, "maxZoom": 19, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
-    // );
+    var main_map = L.map(
+        "main_map",
+        {
+            center: [1.3474574403155464, 103.68459204844389],
+            crs: L.CRS.EPSG3857,
+            maxBounds: [[1.3399, 103.6764], [1.3562, 103.6904]],
+            zoom: 20,
+            zoomControl: true,
+            preferCanvas: false,
+        }
+    );
+    var tile_layer = L.tileLayer(
+        "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+        {"attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors", "detectRetina": false, "maxNativeZoom": 19, "maxZoom": 19, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
+    );
     
-    // tile_layer.addTo(main_map);
+    tile_layer.addTo(main_map);
 
-    // fetch('./output_file.geojson').then(response => response.json())
-    //     .then(data => {L.geoJSON(data,
-    //         {onEachFeature: function (feature, layer) {
-    //                 layer.on('click', function () {
-    //                 this.setStyle({ color: 'red', weight: 2 });
-    //                 });
-    //             }
-    //         }).addTo(main_map)})
+    fetch('./data/multipolygons.geojson').then(response => response.json())
+        .then(data => {L.geoJSON(data,
+            {onEachFeature: function (feature, layer) {
+                    layer.on('click', function () {
+                    this.setStyle({ color: 'red', weight: 2 });
+                    });
+                }
+            }).addTo(main_map)})
     
-    async function sendFn(){
-        const poly = encodeURIComponent('((1,1),(2,3),(4,3),(6,9))')
-        const state = 2
-        const result = await fetch(
-            `/api/upload?poly=${poly}&state=${state}`,
-            {headers: { Accept: "*/*" }, method:"POST"})
-        const content2 = await result.json()
-        document.getElementById("testdiv").innerHTML = content2["message"]
-    }
+    // async function sendFn(){
+    //     const poly = encodeURIComponent('((1,1),(2,3),(4,3),(6,9))')
+    //     const state = 2
+    //     const result = await fetch(
+    //         `/api/upload?poly=${poly}&state=${state}`,
+    //         {headers: { Accept: "*/*" }, method:"POST"})
+    //     const content2 = await result.json()
+    //     document.getElementById("testdiv").innerHTML = content2["message"]
+    // }
     
 </script>
