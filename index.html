@@ -53,7 +53,9 @@
     
 
     fetch('./data/multipolygons.geojson').then(response => response.json()).then(
-        data =>{console.log(data)}
+        data =>{for (let key in data["features"]){
+            console.log(data["features"][`${key}`]['geometry']['coordinates']['0'])
+        }}
     )    
     // async function sendFn(){
     //     const poly = encodeURIComponent('((1,1),(2,3),(4,3),(6,9))')
