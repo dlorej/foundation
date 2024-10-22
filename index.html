@@ -51,6 +51,10 @@
                 }
             }).addTo(main_map)})
     
+
+    fetch('./data/multipolygons.geojson').then(response => response.json()).then(
+        data =>{console.log(data)}
+    )    
     // async function sendFn(){
     //     const poly = encodeURIComponent('((1,1),(2,3),(4,3),(6,9))')
     //     const state = 2
