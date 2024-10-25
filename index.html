@@ -56,7 +56,7 @@
         data =>{for (let key in data["features"]){
             var poly = data["features"][`${key}`]['geometry']['coordinates']['0']
             var data = encodeURIComponent(`(${poly.map(pair => `(${pair.join(',')})`).join(',')})`)
-            const name = data["features"][`${key}`]["properties"]["name"]['0']
+            const name = data["features"][`${key}`]["properties"]["name"]
             console.log(poly,name)
             //chnage table in vercel add owner,storage
             //onclick = delete from table
