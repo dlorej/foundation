@@ -54,7 +54,14 @@
 
     fetch('./data/multipolygons.geojson').then(response => response.json()).then(
         data =>{for (let key in data["features"]){
-            console.log(data["features"][`${key}`]['geometry']['coordinates']['0'])
+            var poly = data["features"][`${key}`]['geometry']['coordinates']['0']
+            var data = encodeURIComponent(`(${poly.map(pair => `(${pair.join(',')})`).join(',')})`)
+            const name = data["features"][`${key}`]["properties"]["name"]['0']
+            console.log(poly,name)
+            //chnage table in vercel add owner,storage
+            //onclick = delete from table
+            //upload into table for each poly
+
         }}
     )    
     // async function sendFn(){
