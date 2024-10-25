@@ -57,7 +57,7 @@
             var poly = data["features"][`${key}`]['geometry']['coordinates']['0']
             var data = encodeURIComponent(`(${poly.map(pair => `(${pair.join(',')})`).join(',')})`)
             var name = data["features"][`${key}`]["properties"]["name"]
-            sendFn(data,name)
+            console.log(data)
             //chnage table in vercel add owner,storage
             //onclick = delete from table
             //upload into table for each poly
