@@ -55,23 +55,29 @@
     fetch('./data/buildingsv3.json').then(response => response.json()).then(
         data =>{for (let key in data["features"]){
             var poly = data["features"][`${key}`]['geometry']['coordinates']['0']
-            // var data = encodeURIComponent(`(${poly.map(pair => `(${pair.join(',')})`).join(',')})`)
-            const name = data["features"][`${key}`]["properties"]["name"]
-            console.log(name)
+            var data = encodeURIComponent(`(${poly.map(pair => `(${pair.join(',')})`).join(',')})`)
+            var name = data["features"][`${key}`]["properties"]["name"]
+            sendFn(data,name)
             //chnage table in vercel add owner,storage
             //onclick = delete from table
             //upload into table for each poly
 
         }}
     )    
-    // async function sendFn(){
-    //     const poly = encodeURIComponent('((1,1),(2,3),(4,3),(6,9))')
-    //     const state = 2
-    //     const result = await fetch(
-    //         `/api/upload?poly=${poly}&state=${state}`,
-    //         {headers: { Accept: "*/*" }, method:"POST"})
-    //     const content2 = await result.json()
-    //     document.getElementById("testdiv").innerHTML = content2["message"]
-    // }
+    async function sendFn(encoded_polygon,name){
+        const result = await fetch(
+            `/api/upload?encoded_poly=${encoded_polygon}&name=${name}`,
+            {headers: { Accept: "*/*" }, method:"POST"}
+        )
+        const res = await result.json()
+        console.log(res["message"])
+        // const poly = encodeURIComponent('((1,1),(2,3),(4,3),(6,9))')
+        // const state = 2
+        // const result = await fetch(
+        //     `/api/upload?poly=${poly}&state=${state}`,
+        //     {headers: { Accept: "*/*" }, method:"POST"})
+        // const content2 = await result.json()
+        // document.getElementById("testdiv").innerHTML = content2["message"]
+    }
     
 </script>
