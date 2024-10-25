@@ -52,7 +52,7 @@
             }).addTo(main_map)})
     
 
-    fetch('./data/multipolygons.geojson').then(response => response.json()).then(
+    fetch('./data/buildingsv3.json').then(response => response.json()).then(
         data =>{for (let key in data["features"]){
             var poly = data["features"][`${key}`]['geometry']['coordinates']['0']
             var data = encodeURIComponent(`(${poly.map(pair => `(${pair.join(',')})`).join(',')})`)
