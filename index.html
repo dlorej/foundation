@@ -68,8 +68,11 @@
     sendFn()
 
     async function sendFn(encoded_polygon,name){
-        const result = await fetch(
-            `/api/upload?encoded_poly=${encoded_polygon}&name=${name}`,
+        // const result = await fetch(
+        //     `/api/upload?encoded_poly=${encoded_polygon}&name=${name}`,
+        //     {headers: { Accept: "*/*" }, method:"POST"}
+        // )
+        const result = await fetch(`/api/upload`,
             {headers: { Accept: "*/*" }, method:"POST"}
         )
         const res = await result.json()
