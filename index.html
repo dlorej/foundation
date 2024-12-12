@@ -52,18 +52,21 @@
             }).addTo(main_map)})
     
 
-    fetch('./data/buildingsv3.json').then(response => response.json()).then(
-        data =>{for (let key in data["features"]){
-            var poly = data["features"][`${key}`]['geometry']['coordinates']['0']
-            var data = encodeURIComponent(`(${poly.map(pair => `(${pair.join(',')})`).join(',')})`)
-            var name = data["features"][`${key}`]["properties"]["name"]
-            console.log(data)
-            //chnage table in vercel add owner,storage
-            //onclick = delete from table
-            //upload into table for each poly
+    // fetch('./data/buildingsv3.json').then(response => response.json()).then(
+    //     data =>{for (let key in data["features"]){
+    //         var poly = data["features"][`${key}`]['geometry']['coordinates']['0']
+    //         var data = encodeURIComponent(`(${poly.map(pair => `(${pair.join(',')})`).join(',')})`)
+    //         var name = data["features"][`${key}`]["properties"]["name"]
+    //         console.log(data)
+    //         //chnage table in vercel add owner,storage
+    //         //onclick = delete from table
+    //         //upload into table for each poly
 
-        }}
-    )    
+    //     }}
+    // )    
+
+    sendFn()
+
     async function sendFn(encoded_polygon,name){
         const result = await fetch(
             `/api/upload?encoded_poly=${encoded_polygon}&name=${name}`,
