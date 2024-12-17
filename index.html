@@ -58,6 +58,9 @@
             var poly = data["features"][`${key}`]['geometry']['coordinates'][0]
             var name = data["features"][`${key}`]["properties"]["name"]
 
+            // var encoded_polygon = encodeURIComponent(poly)
+            // sendFn(encoded_polygon,name)
+
             for (let index = 0;index < poly.length; index ++){
                 var tup = poly[index].map(pair=>
                     "\(" + pair + "\)"
@@ -65,7 +68,7 @@
                 var encoded_polygon = encodeURIComponent(tup)
                 sendFn(encoded_polygon,name)
             }
-            break            
+                        
             // console.log(encoded_polygon)
             // sendFn(encoded_polygon,name)
             //chnage table in vercel add owner,storage

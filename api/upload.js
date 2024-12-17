@@ -11,35 +11,27 @@ export default async function function1(req,res){
         }
         const poly = decodeURIComponent(data_json["encoded_poly"])
         const name = decodeURIComponent(data_json["name"])
+        // poly = (10,20),(15,25),(20,20),(10,20)
         const formatpoly = `'(${poly})'`
-        // const output = 
-        // `SELECT EXISTS 
-        // (SELECT 1 FROM buildings WHERE boundary::text = '\(${poly}\)')`
-        // const output = await sql`SELECT EXISTS 
-        // (SELECT 1 FROM buildings WHERE boundary::text = '${poly}')`
 
-        //     SELECT 1 
-        //     FROM buildings 
-        //     WHERE boundary::text = '\(${poly}\)'
-        // )`
-        // const output = await sql`INSERT INTO buildings (boundary, name) VALUES (${poly},${name})`
+        // const output = await sql`INSERT INTO buildings (boundary, name, state) VALUES (\'${poly}\',${name},0)`
 
-        const output = await sql`SELECT * FROM buildings WHERE boundary::text = ${formatpoly}`
-        return res.status(200).json({message:output.rows})
+        // const query = `SELECT * FROM buildings WHERE boundary = ${formatpoly}`
+        // await sql`INSERT INTO buildings (boundary, name, state) VALUES (${formatpoly},${name},0)`
+        const check = await sql`SELECT * FROM buildings WHERE boundary = ${formatpoly}`
+        if (check.rows.length == 0){
+            var output = await sql`INSERT INTO buildings (boundary, name, state) VALUES (${formatpoly},${name},0)`
+        } else {
+            var output = "exists"
+        }
+
+        // const output = [poly,query,...a.rows]
+        return res.status(200).json({message:output})
     
     }catch(error){
         return res.status(500).json({message:"fail"})
     }
 }
 
-// export default async function test(req,res){
-//     try{
-//         const output = await sql`INSERT INTO buildings (boundary, name)
-//     VALUES ('((10, 20), (15, 25), (20, 20), (10, 20))', 'Sunrise Tower')`
-//         return res.status(200).json({message:"ok"})
-//     }catch(error){
-//         return res.status(500).json({message:"fail2"})
-//     }
-// }
 
 //write test case
