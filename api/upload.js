@@ -11,18 +11,21 @@ export default async function function1(req,res){
         }
         const poly = decodeURIComponent(data_json["encoded_poly"])
         const name = decodeURIComponent(data_json["name"])
-        // const output = `SELECT EXISTS (
+        const formatpoly = `'(${poly})'`
+        // const output = 
+        // `SELECT EXISTS 
+        // (SELECT 1 FROM buildings WHERE boundary::text = '\(${poly}\)')`
+        // const output = await sql`SELECT EXISTS 
+        // (SELECT 1 FROM buildings WHERE boundary::text = '${poly}')`
+
         //     SELECT 1 
         //     FROM buildings 
         //     WHERE boundary::text = '\(${poly}\)'
         // )`
-        const output = await sql`SELECT EXISTS (
-            SELECT 1 
-            FROM buildings 
-            WHERE boundary::text = '\(${poly}\)'
-        )`
         // const output = await sql`INSERT INTO buildings (boundary, name) VALUES (${poly},${name})`
-        return res.status(200).json({message:output})
+
+        const output = await sql`SELECT * FROM buildings WHERE boundary::text = ${formatpoly}`
+        return res.status(200).json({message:output.rows})
     
     }catch(error){
         return res.status(500).json({message:"fail"})
