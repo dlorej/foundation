@@ -24,6 +24,9 @@
     <div class="folium-map" id="main_map" ></div>
 </body>
 <script>
+
+    const entities = []
+
     var main_map = L.map(
         "main_map",
         {
@@ -42,72 +45,75 @@
     
     tile_layer.addTo(main_map);
 
-    fetch('./data/multipolygons.geojson').then(response => response.json())
-        .then(data => {L.geoJSON(data,
-            {onEachFeature: function (feature, layer) {
-                    layer.on('click', function () {
-                    this.setStyle({ color: 'green', weight: 2 });
-                    });
-                }
-            }).addTo(main_map)})
-    
+    // fetch('./data/multipolygons.geojson').then(response => response.json())
+    //     .then(data=>{console.log(data)})
 
+    // fetch('./data/multipolygons.geojson').then(response => response.json())
+    //     .then(data => {L.geoJSON(data,
+    //         {onEachFeature: function (feature, layer) {
+    //                 layer.on('click', function () {
+    //                 this.setStyle({ color: 'green', weight: 2 });
+    //                 });
+    //             }
+    //         }).addTo(main_map)})
+    
+    
     fetch('./data/buildingsv3.json').then(response => response.json()).then(
         data =>{for (let key in data["features"]){
             // console.log(data["features"][`${key}`])
             var poly = data["features"][`${key}`]['geometry']['coordinates'][0]
             var name = data["features"][`${key}`]["properties"]["name"]
-
-            // var encoded_polygon = encodeURIComponent(poly)
-            // sendFn(encoded_polygon,name)
-
-            for (let index = 0;index < poly.length; index ++){
-                var tup = poly[index].map(pair=>
-                    "\(" + pair + "\)"
-                )
-                var encoded_polygon = encodeURIComponent(tup)
-                sendFn(encoded_polygon,name)
+            
+            if (poly.length != 1){
+                console.log(poly)
+                sendFn(JSON.stringify(poly),name)
+                break
             }
-                        
-            // console.log(encoded_polygon)
-            // sendFn(encoded_polygon,name)
-            //chnage table in vercel add owner,storage
-            //onclick = delete from table
-            //upload into table for each poly
-
-
-
         }}
     )    
 
     async function sendFn(encoded_polygon,name){
+        var data = {
+                        // abc:"hello"
+                        "name":name,
+                        "poly":encoded_polygon
+                    }
+        // const body = JSON.stringify(data)
+        // console.log(body)
+        // const info = JSON.parse(body)
+        // console.log(JSON.parse(info["var2"]))
+
         // console.log(encoded_polygon,name)
-        const result = await fetch(
-            `/api/upload?encoded_poly=${encoded_polygon}&name=${name}`,
-            {headers: { Accept: "*/*" }, method:"POST"}
-        )
+        const result = await fetch(`/api/upload`,
+        {
+            headers: { Accept: "*/*", "Content-Type": "application/json", },
+            method:"POST",
+            body: JSON.stringify(data)
+        })
         const res = await result.json()
         console.log(res["message"])
     }
 
+    async function getPolys(){
+        const result = await fetch(
+            `/api/getAllPolys`
+        )
+        const res = await result.json()
+        // console.log(res.length)
+        for (let i = 0; i < res["message"].length; i++){
+            coord = JSON.parse(res["message"][i].boundary)
+            var featureObj = {"type":"MultiPolygon","coordinates":coord}
+            console.log(featureObj)
+            // L.geoJSON(featureObj).addTo(main_map)
+            // entities.push(res[i])
+            // L.geoJSON(res["message"][i].boundary).addTo(main_map)
+            // console.log(res["message"][i].boundary)
+        }
+        // output = res["message"][0].name
+        // console.log(output)
 
-//     async function sendFn(encoded_polygon,name){
-//         // const result = await fetch(
-//         //     `/api/upload?encoded_poly=${encoded_polygon}&name=${name}`,
-//         //     {headers: { Accept: "*/*" }, method:"POST"}
-//         // )
-//         const result = await fetch(`/api/upload?encoded_poly=${encoded_polygon}&name=${name}`,
-//             {headers: { Accept: "*/*" }, method:"POST"}
-//         )
-//         const res = await result.json()
-//         console.log(res["message"])
-//         // const poly = encodeURIComponent('((1,1),(2,3),(4,3),(6,9))')
-//         // const state = 2
-//         // const result = await fetch(
-//         //     `/api/upload?poly=${poly}&state=${state}`,
-//         //     {headers: { Accept: "*/*" }, method:"POST"})
-//         // const content2 = await result.json()
-//         // document.getElementById("testdiv").innerHTML = content2["message"]
-//     }
-    
+    }
+
+    // getPolys()   
+
 </script>
