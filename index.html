@@ -57,17 +57,18 @@
     //             }
     //         }).addTo(main_map)})
     
-    
-    fetch('./data/buildingsv3.json').then(response => response.json()).then(
-        data =>{for (let key in data["features"]){
-            // console.log(data["features"][`${key}`])
-            var poly = data["features"][`${key}`]['geometry']['coordinates'][0]
-            var name = data["features"][`${key}`]["properties"]["name"]
-            
-            sendFn(JSON.stringify(poly),name)
-        }}
-    )    
+    async function upload(){
+        fetch('./data/buildingsv3.json').then(response => response.json()).then(
+            data =>{for (let key in data["features"]){
+                var poly = data["features"][`${key}`]['geometry']['coordinates']
+                var name = data["features"][`${key}`]["properties"]["name"]
+                
+                sendFn(JSON.stringify(poly),name)
+            }}
+        )
+    }
 
+    // upload()
     async function sendFn(encoded_polygon,name){
         var data = {
                         // abc:"hello"
@@ -91,21 +92,13 @@
             `/api/getAllPolys`
         )
         const res = await result.json()
-        // console.log(res.length)
         for (let i = 0; i < res["message"].length; i++){
-            coord = JSON.parse(res["message"][i].boundary)
-            var featureObj = {"type":"MultiPolygon","coordinates":coord}
-            console.log(featureObj)
-            // L.geoJSON(featureObj).addTo(main_map)
-            // entities.push(res[i])
-            // L.geoJSON(res["message"][i].boundary).addTo(main_map)
-            // console.log(res["message"][i].boundary)
+            var poly = JSON.parse(res["message"][i].boundary)
+            var featureObj = {"type":"MultiPolygon","coordinates":poly}
+            L.geoJSON(featureObj).addTo(main_map)
+            console.log(i)
         }
-        // output = res["message"][0].name
-        // console.log(output)
-
     }
 
-    // getPolys()   
-
+    getPolys()
 </script>
