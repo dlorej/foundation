@@ -64,11 +64,7 @@
             var poly = data["features"][`${key}`]['geometry']['coordinates'][0]
             var name = data["features"][`${key}`]["properties"]["name"]
             
-            if (poly.length != 1){
-                console.log(poly)
-                sendFn(JSON.stringify(poly),name)
-                break
-            }
+            sendFn(JSON.stringify(poly),name)
         }}
     )    
 
@@ -78,12 +74,8 @@
                         "name":name,
                         "poly":encoded_polygon
                     }
-        // const body = JSON.stringify(data)
-        // console.log(body)
-        // const info = JSON.parse(body)
-        // console.log(JSON.parse(info["var2"]))
+        
 
-        // console.log(encoded_polygon,name)
         const result = await fetch(`/api/upload`,
         {
             headers: { Accept: "*/*", "Content-Type": "application/json", },
