@@ -94,10 +94,26 @@
         const res = await result.json()
         for (let i = 0; i < res["message"].length; i++){
             var poly = JSON.parse(res["message"][i].boundary)
-            var featureObj = {"type":"MultiPolygon","coordinates":poly}
-            L.geoJSON(featureObj).addTo(main_map)
+            var state = res["message"][i].state
+            var name = res["message"][i].name
+            var featureObj = {"type":"Feature",
+                "geometry":
+                    {"type":"MultiPolygon","coordinates":poly},
+                "properties":
+                    {"state":state,"name":name}
+            }
+            L.geoJSON(featureObj,{onEachFeature:displayName}).addTo(main_map)
             console.log(i)
         }
+    }
+
+    function displayName(feature,layer){
+        layer.on('mouseover', function (e) {
+            e.target.setStyle({color:"green"})
+        })
+        layer.on('mouseout',function(e){
+            e.target.setStyle({color:"#3388FF"})
+        })
     }
 
     getPolys()
