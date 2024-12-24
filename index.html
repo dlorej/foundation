@@ -32,7 +32,7 @@
         {
             center: [1.3474574403155464, 103.68459204844389],
             crs: L.CRS.EPSG3857,
-            maxBounds: [[1.3399, 103.6764], [1.3562, 103.6904]],
+            maxBounds: [[1.3299, 103.6564], [1.3562, 103.6904]],
             zoom: 20,
             zoomControl: true,
             preferCanvas: false,
@@ -71,7 +71,6 @@
     // upload()
     async function sendFn(encoded_polygon,name){
         var data = {
-                        // abc:"hello"
                         "name":name,
                         "poly":encoded_polygon
                     }
@@ -113,6 +112,25 @@
         })
         layer.on('mouseout',function(e){
             e.target.setStyle({color:"#3388FF"})
+        })
+        layer.on('click',function(e){
+            const temp = e.target.feature
+            changeStateFn(temp.properties.name,JSON.stringify(temp.geometry.coordinates))
+        })
+    }
+
+    async function changeStateFn(name,poly){
+        var data = {
+                        "name":name,
+                        "poly":poly
+                    }
+        
+        console.log(data)
+        const result = await fetch(`/api/changeState`,
+        {
+            headers: { Accept: "*/*", "Content-Type": "application/json", },
+            method:"POST",
+            body: JSON.stringify(data)
         })
     }
 
