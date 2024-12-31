@@ -1,0 +1,114 @@
+:root {
+    --topbar_height: 8%;
+    --topbar_elem_height:5%;
+  }
+html,body {
+    margin: 0;
+    }
+#main_map {
+    position: absolute;
+    width: 100.0%;
+    height: 100.0%;
+    left: 0.0%;
+    top: 0.0%;
+}
+.leaflet-container {
+    font-size: 1rem; 
+}
+.leaflet-control-attribution {
+    display: none !important;
+}
+.folium_map{
+    z-index: 1;
+    position: relative;
+}
+#topbar{
+    z-index: 9999;
+    height: 6vh;
+    width: 100%;
+    display: grid;
+    grid-template-areas: "blank logo login";
+    grid-template-columns: 1fr 1fr 1fr;
+    background-color: rgba(51, 136, 255, 0.2);
+    color: black;
+    position: fixed;
+}
+#blank, #logo, #login {
+    display: flex; /* Prevent stretching from internal elements */
+    overflow: hidden;
+    justify-content: center;
+    align-items: center;
+}
+#logo img{
+    max-height: 100%;
+    max-width: 100%;
+    object-fit: contain;
+    display: block;
+    justify-content: center;
+}
+#blank{
+    height: 100%;
+    grid-area: blank;
+}
+#logo{
+    grid-area: logo;
+}
+#login{
+    font-size: 55px;
+    grid-area: login;
+}
+#popup{
+    position: absolute;
+    max-width:95%;
+    left:2.5%;
+    border-radius: 15px;
+    background-color: #e6e6e6;
+    z-index: 9999;
+    top:200%;
+    font-size: 50px;
+    padding: 50px;
+    box-sizing: border-box;
+    transition: top 0.5s ease;
+    border: 10px solid white;
+}
+
+#popup label{
+    display: inline-block;
+    margin: 0 0 20px 0;
+}
+
+#popup input[type=text], #popup input[type=password], #popup input[type=tel]{
+    width: 100%;
+    padding: 15px;
+    margin: 5px 0 40px 0;
+    border: none;
+    background: #dedede;
+    font-size: 50px;
+}
+
+#popup input[type=text]:focus, #popup input[type=password]:focus{
+    background-color: #cfcfcf;
+    outline: none;
+}
+
+#popup input[type=text]:valid, #popup input[type=password]:valid, #popup input[type=tel]:valid{
+    background-color: palegreen;
+}
+
+#popup button{
+    font-size: 50px;
+    padding: 5px 20px;
+    margin-left: 50%;
+    transform: translateX(-50%);
+}
+
+#overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #00000080; /* Darken effect */
+    z-index: 9998; /* Below the popup but above the map */
+    display: none; /* Hidden by default */
+  }

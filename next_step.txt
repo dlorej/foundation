@@ -1,6 +1,0 @@
-create vercel api and databse, update building info on click
-
-create table buildings (
-    id serial PRIMARY KEY,
-    builing polygon NOT NULL,
-    state smallint NOTNULL)
