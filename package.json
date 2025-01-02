@@ -3,8 +3,10 @@
     "pwa-asset-generator": "^6.3.2"
   },
   "dependencies": {
+    "@google-cloud/local-auth": "^3.0.1",
     "@vercel/postgres": "^0.10.0",
-    "cheerio": "^1.0.0"
+    "cheerio": "^1.0.0",
+    "googleapis": "^144.0.0"
   },
   "type": "module"
 }

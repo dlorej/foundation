@@ -1,148 +1,172 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>Gmail API Quickstart</title>
-    <meta charset="utf-8" />
-  </head>
-  <body>
-    <p>Gmail API Quickstart</p>
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <link rel="stylesheet" href="index.css"> 
+</head>
+<body>
+    <div id="topbar">
+        <div id ="blank"></div>
+        <div id="logo">
+            <img src="/icons/circle.png" alt="logo">
+        </div>
+        <div id="login" onclick="loginPopup()">
+            Log in
+        </div>
+    </div>
+    <div id="overlay" onclick="closeForm(false)"></div>
+    <div id="popup">
+        <label for="matric"><b>Matric Number</b></label>
+        <input id = "matric" type="text" placeholder="Enter Matric Number" name="matric" 
+            pattern="^[a-zA-Z](0[0-9]|1[0-9]|2[0-9])\d{5}[a-zA-Z]$" 
+            oninput="this.value = this.value.toUpperCase()" required>
 
-    <!--Add buttons to initiate auth sequence and sign out-->
-    <button id="authorize_button" onclick="handleAuthClick()">Authorize</button>
-    <button id="signout_button" onclick="handleSignoutClick()">Sign Out</button>
+        <label for="number"><b>Phone Number</b></label>
+        <input type="tel" placeholder="Enter Phone Number" name="number" required>
 
-    <pre id="content" style="white-space: pre-wrap;"></pre>
+        <!-- <label for="psw"><b>Password</b></label>
+        <input type="password" placeholder="Enter Password" name="psw" required> -->
 
-    <script type="text/javascript">
-      /* exported gapiLoaded */
-      /* exported gisLoaded */
-      /* exported handleAuthClick */
-      /* exported handleSignoutClick */
+        <button class="submit">Login</button>
+    </div>
 
-      // TODO(developer): Set to client ID and API key from the Developer Console
-      const CLIENT_ID = process.env.google_client_id;
-      const API_KEY = process.env.google_api_key;
-
-      // Discovery doc URL for APIs used by the quickstart
-      const DISCOVERY_DOC = 'https://www.googleapis.com/discovery/v1/apis/gmail/v1/rest';
-
-      // Authorization scopes required by the API; multiple scopes can be
-      // included, separated by spaces.
-      const SCOPES = 'https://www.googleapis.com/auth/gmail.readonly';
-
-      let tokenClient;
-      let gapiInited = false;
-      let gisInited = false;
-
-      document.getElementById('authorize_button').style.visibility = 'hidden';
-      document.getElementById('signout_button').style.visibility = 'hidden';
-
-      /**
-       * Callback after api.js is loaded.
-       */
-      function gapiLoaded() {
-        gapi.load('client', initializeGapiClient);
-      }
-
-      /**
-       * Callback after the API client is loaded. Loads the
-       * discovery doc to initialize the API.
-       */
-      async function initializeGapiClient() {
-        await gapi.client.init({
-          apiKey: API_KEY,
-          discoveryDocs: [DISCOVERY_DOC],
-        });
-        gapiInited = true;
-        maybeEnableButtons();
-      }
-
-      /**
-       * Callback after Google Identity Services are loaded.
-       */
-      function gisLoaded() {
-        tokenClient = google.accounts.oauth2.initTokenClient({
-          client_id: CLIENT_ID,
-          scope: SCOPES,
-          callback: '', // defined later
-        });
-        gisInited = true;
-        maybeEnableButtons();
-      }
-
-      /**
-       * Enables user interaction after all libraries are loaded.
-       */
-      function maybeEnableButtons() {
-        if (gapiInited && gisInited) {
-          document.getElementById('authorize_button').style.visibility = 'visible';
+    <div class="folium-map" id="main_map" ></div>
+</body>
+<script>
+    var main_map = L.map(
+        "main_map",
+        {
+            center: [1.3474574403155464, 103.68459204844389],
+            crs: L.CRS.EPSG3857,
+            // maxBounds: [[1.3299, 103.6564], [1.3562, 103.6904]],
+            zoom: 20,
+            zoomControl: true,
+            preferCanvas: false,
         }
-      }
+    );
+    var tile_layer = L.tileLayer(
+        "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+        {"attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors", "detectRetina": false, "maxNativeZoom": 19, "maxZoom": 19, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
+    );
+    
+    tile_layer.addTo(main_map);
+    
+    async function upload(){
+        fetch('./data/buildingsv3.json').then(response => response.json()).then(
+            data =>{for (let key in data["features"]){
+                var poly = data["features"][`${key}`]['geometry']['coordinates']
+                var name = data["features"][`${key}`]["properties"]["name"]
+                
+                sendFn(JSON.stringify(poly),name)
+            }}
+        )
+    }
 
-      /**
-       *  Sign in the user upon button click.
-       */
-      function handleAuthClick() {
-        tokenClient.callback = async (resp) => {
-          if (resp.error !== undefined) {
-            throw (resp);
-          }
-          document.getElementById('signout_button').style.visibility = 'visible';
-          document.getElementById('authorize_button').innerText = 'Refresh';
-          await listLabels();
-        };
+    // upload()
+    async function sendFn(encoded_polygon,name){
+        var data = {
+                        "name":name,
+                        "poly":encoded_polygon
+                    }
+        
 
-        if (gapi.client.getToken() === null) {
-          // Prompt the user to select a Google Account and ask for consent to share their data
-          // when establishing a new session.
-          tokenClient.requestAccessToken({prompt: 'consent'});
+        const result = await fetch(`/api/upload`,
+        {
+            headers: { Accept: "*/*", "Content-Type": "application/json", },
+            method:"POST",
+            body: JSON.stringify(data)
+        })
+        const res = await result.json()
+        console.log(res["message"])
+    }
+
+    async function getPolys(){
+        const result = await fetch(
+            `/api/getAllPolys`
+        )
+        const res = await result.json()
+        for (let i = 0; i < res["message"].length; i++){
+            var poly = JSON.parse(res["message"][i].boundary)
+            var state = res["message"][i].state
+            var name = res["message"][i].name
+            var featureObj = {"type":"Feature",
+                "geometry":
+                    {"type":"MultiPolygon","coordinates":poly},
+                "properties":
+                    {"state":state,"name":name}
+            }
+            L.geoJSON(featureObj,{onEachFeature:blank,style:diff,filter:filter}).addTo(main_map)
+        }
+    }
+
+    function blank(feature){
+        
+    }
+
+    async function deleteBuilding(feature,layer){
+        layer.on('click',async function(e){
+            const temp = e.target.feature
+            const success = await changeStateFn(temp.properties.name,JSON.stringify(temp.geometry.coordinates))
+            if (success){
+                const temp2 = temp.properties.state
+                if (temp2 == 0){
+                    e.target.feature.properties.state = -1
+                } else if (temp2 == -1){
+                    e.target.feature.properties.state = 0
+                }
+            }
+            e.target.setStyle(diff(e.target.feature))
+        })
+    }
+
+    async function changeStateFn(name,poly){
+        var data = {
+                        "name":name,
+                        "poly":poly
+                    }
+        
+        const result = await fetch(`/api/changeState`,
+        {
+            headers: { Accept: "*/*", "Content-Type": "application/json", },
+            method:"POST",
+            body: JSON.stringify(data)
+        })
+        const res = await result.json()
+        if (res["message"] == "success"){
+            return true
         } else {
-          // Skip display of account chooser and consent dialog for an existing session.
-          tokenClient.requestAccessToken({prompt: ''});
+            return false
         }
-      }
+    }
 
-      /**
-       *  Sign out the user upon button click.
-       */
-      function handleSignoutClick() {
-        const token = gapi.client.getToken();
-        if (token !== null) {
-          google.accounts.oauth2.revoke(token.access_token);
-          gapi.client.setToken('');
-          document.getElementById('content').innerText = '';
-          document.getElementById('authorize_button').innerText = 'Authorize';
-          document.getElementById('signout_button').style.visibility = 'hidden';
+    function diff(feature){
+        switch (feature.properties.state) {
+            case 0: return {color: "#3388FF"}; //blue
+            case -1:   return {color: "red"};
         }
-      }
+    }
 
-      /**
-       * Print all Labels in the authorized user's inbox. If no labels
-       * are found an appropriate message is printed.
-       */
-      async function listLabels() {
-        let response;
-        try {
-          response = await gapi.client.gmail.users.labels.list({
-            'userId': 'me',
-          });
-        } catch (err) {
-          document.getElementById('content').innerText = err.message;
-          return;
+    function filter(feature){
+        if (feature.properties.state == -1) {
+            return false
+        } else{
+            return true
         }
-        const labels = response.result.labels;
-        if (!labels || labels.length == 0) {
-          document.getElementById('content').innerText = 'No labels found.';
-          return;
+    }
+
+    function loginPopup(){
+        document.getElementById("popup").style.top = "20%"
+        document.getElementById("overlay").style.display = "block"
+    }
+
+    function closeForm(submit){
+        if (submit){
+
+        }else{
+            document.getElementById("popup").style.top = "-200%"
+            document.getElementById("overlay").style.display = "none"
         }
-        // Flatten to string to display
-        const output = labels.reduce(
-            (str, label) => `${str}${label.name}\n`,
-            'Labels:\n');
-        document.getElementById('content').innerText = output;
-      }
-    </script>
-    <script async defer src="https://apis.google.com/js/api.js" onload="gapiLoaded()"></script>
-    <script async defer src="https://accounts.google.com/gsi/client" onload="gisLoaded()"></script>
-  </body>
-</html>
+    }
+    getPolys()
+</script>

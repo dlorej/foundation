@@ -1,2 +1,5 @@
 .vercel
+.env
 test.html
+del.html
+admin.html
