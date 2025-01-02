@@ -71,19 +71,21 @@ const CLIENT_ID = process.env.google_client_id;
 const CLIENT_SECRET = process.env.google_client_secret;
 const REDIRECT_URI = 'http://localhost:3000/api/googleAuth'; // Adjust as needed for production
 
-const oauth2Client = new google.auth.OAuth2(
-    CLIENT_ID,
-    CLIENT_SECRET,
-    REDIRECT_URI
-);
+
 
 export default async function handler(req, res) {
-// Generate the Google OAuth URL
-const authUrl = oauth2Client.generateAuthUrl({
-    access_type: 'offline',
-    scope: 'https://www.googleapis.com/auth/gmail.send',
-});
 
-// Redirect the user to the Google authentication page
-res.redirect(authUrl);
+    const oauth2Client = new google.auth.OAuth2(
+        CLIENT_ID,
+        CLIENT_SECRET,
+        REDIRECT_URI
+    );
+    // Generate the Google OAuth URL
+    const authUrl = oauth2Client.generateAuthUrl({
+        access_type: 'offline',
+        scope: 'https://www.googleapis.com/auth/gmail.send',
+    });
+
+    // Redirect the user to the Google authentication page
+    res.redirect(authUrl);
 }
