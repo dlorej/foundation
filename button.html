@@ -6,13 +6,21 @@
     <title>Document</title>
 </head>
 <body>
-    <button onclick="sce()" style="font-size: 50px;">testing</button>
+    <button onclick="sce2()" style="font-size: 50px;">testing</button>
+    <div style="font-size: 50px;" onclick="cc(this)">color change</div>
 </body>
 <script>
     async function sce() {
         const result = await fetch(
             `/api/sendConfirmationEmail`
         )
+    }
+    async function sce2() {
+        window.location.href = "/api/sendConfirmationEmail";
+    }
+
+    function cc(el){
+        el.style.backgroundColor = "blue"
     }
 </script>
 </html>

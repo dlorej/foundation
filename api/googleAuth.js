@@ -2,7 +2,7 @@ import { google } from 'googleapis';
 
 const CLIENT_ID = process.env.google_client_id;
 const CLIENT_SECRET = process.env.google_client_secret;
-const REDIRECT_URI = 'http://localhost:3000/api/googleAuth'; // Adjust as needed for production
+const REDIRECT_URI = 'http://localhost:3000/api/gapi3'; // Adjust as needed for production
 
 const oauth2Client = new google.auth.OAuth2(
     CLIENT_ID,
@@ -24,7 +24,8 @@ export default async function handler(req, res) {
         oauth2Client.setCredentials(tokens);
 
         // Now you can use oauth2Client to interact with Google APIs, e.g., send an email
-        res.send('Authentication successful! You can now send confirmation emails.');
+        // res.send('Authentication successful! You can now send confirmation emails.');
+        res.redirect(REDIRECT_URI);
     } catch (error) {
         console.error('Error exchanging code for token', error);
         res.status(500).send('Error during authentication');
