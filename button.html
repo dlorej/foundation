@@ -6,7 +6,7 @@
     <title>Document</title>
 </head>
 <body>
-    <button onclick="sce2()" style="font-size: 50px;">testing</button>
+    <button onclick="sce3()" style="font-size: 50px;">testing</button>
     <div style="font-size: 50px;" onclick="cc(this)">color change</div>
 </body>
 <script>
@@ -16,7 +16,12 @@
         )
     }
     async function sce2() {
-        window.location.href = "/api/sendConfirmationEmail";
+        window.location.href = "/api/gapi3";
+    }
+    async function sce3() {
+        const result = await fetch(
+            `/api/gapi3`
+        )
     }
 
     function cc(el){

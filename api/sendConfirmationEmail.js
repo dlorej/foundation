@@ -70,6 +70,7 @@ import { google } from 'googleapis';
 const CLIENT_ID = process.env.google_client_id;
 const CLIENT_SECRET = process.env.google_client_secret;
 const REDIRECT_URI = 'http://localhost:3000/api/sendConfirmationEmail'; // Adjust as needed for production
+const refreshToken = process.env.google_refresh_token;
 
 var oauth2Client = new google.auth.OAuth2(
     CLIENT_ID,
@@ -79,56 +80,49 @@ var oauth2Client = new google.auth.OAuth2(
 
 
 export default async function handler(req, res) {
+    if (!req.query.code) {
+        // Generate the Google OAuth URL
+        const authUrl = oauth2Client.generateAuthUrl({
+            access_type: 'offline',
+            scope: 'https://www.googleapis.com/auth/gmail.send',
+        });
+        console.log("Generate the Google OAuth URL")
+        res.redirect(authUrl);
+    } else{
+        const { code } = req.query;
+        const { tokens } = await oauth2Client.getToken(code);
+        oauth2Client.setCredentials(tokens);
+        console.log(tokens)
 
-    if (req.method == "GET"){
-        if (!req.query.code) {
-            
-            // Generate the Google OAuth URL
-            const authUrl = oauth2Client.generateAuthUrl({
-                access_type: 'offline',
-                scope: 'https://www.googleapis.com/auth/gmail.send',
-            });
-            console.log("Generate the Google OAuth URL")
-            res.redirect(authUrl);
-        } else{
-            const { code } = req.query;
-            const { tokens } = await oauth2Client.getToken(code);
-            oauth2Client.setCredentials(tokens);
-            console.log(tokens)
+        // const gmail = google.gmail({ version: 'v1', auth: oauth2Client })
 
-            // const gmail = google.gmail({ version: 'v1', auth: oauth2Client })
+        // const randomCode = Array.from({ length: 4 }, () => Math.floor(Math.random() * 36).toString(36)).join('');;
+        // const emailLines = [
+        //     'From: jeroldlimjunpin@gmail.com',
+        //     'To: jeroldlimjunpin@gmail.com',
+        //     'Content-type: text/html;charset=utf-8',
+        //     // 'MIME-Version: 1.0',
+        //     'Subject: [NonUniform] Your Access Code',
+        //     '',
+        //     `<p>Your Access Code: <span style="font-size: 24px;">${randomCode.toUpperCase()}</span></p>`
+        // ];
+        // const email = emailLines.join('\r\n').trim();
+        // const b64 = btoa(email).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
 
-            // const randomCode = Array.from({ length: 4 }, () => Math.floor(Math.random() * 36).toString(36)).join('');;
-            // const emailLines = [
-            //     'From: jeroldlimjunpin@gmail.com',
-            //     'To: jeroldlimjunpin@gmail.com',
-            //     'Content-type: text/html;charset=utf-8',
-            //     // 'MIME-Version: 1.0',
-            //     'Subject: [NonUniform] Your Access Code',
-            //     '',
-            //     `<p>Your Access Code: <span style="font-size: 24px;">${randomCode.toUpperCase()}</span></p>`
-            // ];
-            // const email = emailLines.join('\r\n').trim();
-            // const b64 = btoa(email).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
+        // gmail.users.messages.send({
+        //     userId: 'me',
+        //     requestBody: {
+        //         raw: b64
+        //     }
+        // });
 
-            // gmail.users.messages.send({
-            //     userId: 'me',
-            //     requestBody: {
-            //         raw: b64
-            //     }
-            // });
-
-            // const reply = await gmail.users.labels.list({
-            //     userId: 'me',
-            // });
-            // const labels = reply.data.labels;
-            // console.log(labels[1])
-            
-            // console.log("Email sent successfully")
-            res.redirect('http://localhost:3000/button.html')
-        }
+        // const reply = await gmail.users.labels.list({
+        //     userId: 'me',
+        // });
+        // const labels = reply.data.labels;
+        // console.log(labels[1])
         
-    }else if (req.method == "POST"){
-        console.log(req)
-    }    
+        // console.log("Email sent successfully")
+        res.redirect('http://localhost:3000/button.html')
+    }
 }
