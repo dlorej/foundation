@@ -23,10 +23,9 @@
             oninput="this.value = this.value.toUpperCase()" required> -->
 
         <!-- <label for="email"><b>Email</b></label> -->
-        <input type="text" placeholder="Enter Email" name="email" class="emailField" required>
+        <input type="text" placeholder="Enter Email" name="email" class="emailField" id="imptemail" required>
 
-        <button class="submit" id = "login" onclick="login()">Login</button>
-        <button class="submit" id = "createAccount" onclick="createAccount()">Create Account</button>
+        <button class="submit" id = "login" onclick="emailCheck()">Login</button>
     </div>
 
     <div class="folium-map" id="main_map" ></div>
@@ -182,17 +181,47 @@
         })
         const res = await result.json()
     }
-    async function createAccount() {
-        
+    const emailField = document.getElementById("imptemail")
+    let isValid = false
+
+    
+
+    function testing(){
+        // this.blur()
+        document.getElementById("login").style.backgroundColor="#c3e0c9"
+        // const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        // console.log(emailField.value)
+        // requestAnimationFrame(function(){
+        //     emailField.style.backgroundColor="#c3e0c9"
+        // })
+        // emailField.value = emailField.value
+        // // emailField.blur()
+        // if(emailPattern.test(emailField.value)){
+        //     this.style.backgroundColor="#c3e0c9"
+        //     isValid = true
+        // }else{
+        //     this.style.backgroundColor = ''
+        //     isValid = false
+        // }
     }
-    const emailField = document.querySelector("#popup input[type='text']")
-    emailField.addEventListener('change',function(){
-        const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-        if(emailPattern.test(this.value)){
-            console.log("a")
-            this.classList.add("validEmail")
-        }else{
-            this.classList.remove("validEmail")
-        }
-    })
-</script>
+    function abc(){
+        this.style.backgroundColor="#c3e0c9"
+    }
+    emailField.addEventListener("input",testing)
+    // emailField.addEventListener("change",testing)
+    // emailField.addEventListener("blur",abc)
+
+    // async function emailCheck(){
+    //     const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    //     emailField.style.backgroundColor="#c3e0c9"
+    //     if(emailPattern.test(emailField.value)){
+    //         emailField.style.backgroundColor="#c3e0c9"
+    //     //     // const array = new Uint8Array(8);
+    //     //     // crypto.getRandomValues(array);
+    //     //     // const randomKey = Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
+    //     //     // console.log(randomKey);
+    //     //     // document.cookie=`uid=${randomKey}`
+    //     }
+    // }
+    // console.log(document.cookie)
+    </script>

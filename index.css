@@ -83,20 +83,37 @@ html,body {
     margin: 5px 0 40px 0;
     border: none;
     background: #dedede;
-    font-size: 50px !important;
+    font-size: 50px;
 }
 
 #popup input[type=text]:focus, #popup input[type=password]:focus, #popup input[type=email]:focus{
     background-color: #cfcfcf;
     outline: none;
 }
-
-/* #popup input[type=text]:valid, #popup input[type=password]:valid, #popup input[type=tel]:valid{
-    background-color: palegreen;
-} */
-.validEmail{
-    background-color: palegreen !important;
+/* input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+    -webkit-animation: autofill 0s forwards;
+    animation: autofill 0s forwards;
 }
+@keyframes autofill {
+    100% {
+        background: #c3e0c9;
+        color: inherit;
+    }
+}
+
+@-webkit-keyframes autofill {
+    100% {
+        background: #c3e0c9;
+        color: inherit;
+    }
+} */
+
+input:-webkit-autofill {
+    background-color: #c3e0c9 !important;
+  }
 #popup button{
     font-size: 50px;
     padding: 5px 20px;
