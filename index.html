@@ -17,23 +17,22 @@
     </div>
     <div id="overlay" onclick="closeForm(false)"></div>
     <div id="popup">
-        <label for="matric"><b>Matric Number</b></label>
-        <input id = "matric" type="text" placeholder="Enter Matric Number" name="matric" 
+        <!-- <label for="matric"><b>Matric Number</b></label> -->
+        <!-- <input id = "matric" type="text" placeholder="Enter Matric Number" name="matric" 
             pattern="^[a-zA-Z](0[0-9]|1[0-9]|2[0-9])\d{5}[a-zA-Z]$" 
-            oninput="this.value = this.value.toUpperCase()" required>
+            oninput="this.value = this.value.toUpperCase()" required> -->
 
-        <label for="number"><b>Phone Number</b></label>
-        <input type="tel" placeholder="Enter Phone Number" name="number" required>
+        <!-- <label for="email"><b>Email</b></label> -->
+        <input type="text" placeholder="Enter Email" name="email" class="emailField" required>
 
-        <!-- <label for="psw"><b>Password</b></label>
-        <input type="password" placeholder="Enter Password" name="psw" required> -->
-
-        <button class="submit">Login</button>
+        <button class="submit" id = "login" onclick="login()">Login</button>
+        <button class="submit" id = "createAccount" onclick="createAccount()">Create Account</button>
     </div>
 
     <div class="folium-map" id="main_map" ></div>
 </body>
 <script>
+    //section for server logic
     var main_map = L.map(
         "main_map",
         {
@@ -99,9 +98,8 @@
             L.geoJSON(featureObj,{onEachFeature:blank,style:diff,filter:filter}).addTo(main_map)
         }
     }
-
-    function blank(feature){
-        
+    function blank(){
+        //blank function for onEachFeature
     }
 
     async function deleteBuilding(feature,layer){
@@ -154,7 +152,9 @@
             return true
         }
     }
+    getPolys()
 
+    //section for page logic
     function loginPopup(){
         document.getElementById("popup").style.top = "20%"
         document.getElementById("overlay").style.display = "block"
@@ -168,5 +168,31 @@
             document.getElementById("overlay").style.display = "none"
         }
     }
-    getPolys()
+
+    async function login(){
+        var data = {
+            "matric":matric,
+            "email":email
+        }
+        const result = await fetch(`/api/login`,
+        {
+            headers: { Accept: "*/*", "Content-Type": "application/json", },
+            method:"POST",
+            body: JSON.stringify(data)
+        })
+        const res = await result.json()
+    }
+    async function createAccount() {
+        
+    }
+    const emailField = document.querySelector("#popup input[type='text']")
+    emailField.addEventListener('change',function(){
+        const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        if(emailPattern.test(this.value)){
+            console.log("a")
+            this.classList.add("validEmail")
+        }else{
+            this.classList.remove("validEmail")
+        }
+    })
 </script>

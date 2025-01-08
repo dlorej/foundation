@@ -4,3 +4,4 @@ test.html
 del.html
 admin.html
 credentials.json
+.env*.local

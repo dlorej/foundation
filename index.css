@@ -77,29 +77,35 @@ html,body {
     margin: 0 0 20px 0;
 }
 
-#popup input[type=text], #popup input[type=password], #popup input[type=tel]{
+#popup input[type=text], #popup input[type=password], #popup input[type=tel],#popup input[type=email]{
     width: 100%;
     padding: 15px;
     margin: 5px 0 40px 0;
     border: none;
     background: #dedede;
-    font-size: 50px;
+    font-size: 50px !important;
 }
 
-#popup input[type=text]:focus, #popup input[type=password]:focus{
+#popup input[type=text]:focus, #popup input[type=password]:focus, #popup input[type=email]:focus{
     background-color: #cfcfcf;
     outline: none;
 }
 
-#popup input[type=text]:valid, #popup input[type=password]:valid, #popup input[type=tel]:valid{
+/* #popup input[type=text]:valid, #popup input[type=password]:valid, #popup input[type=tel]:valid{
     background-color: palegreen;
+} */
+.validEmail{
+    background-color: palegreen !important;
 }
-
 #popup button{
     font-size: 50px;
     padding: 5px 20px;
     margin-left: 50%;
     transform: translateX(-50%);
+    display: inline-block;
+}
+#popup #login{
+    margin-bottom: 10px;
 }
 
 #overlay {
