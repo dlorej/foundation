@@ -168,9 +168,9 @@
         }
     }
 
-    async function login(){
+    async function login(uid,email){
         var data = {
-            "matric":matric,
+            "uid":uid,
             "email":email
         }
         const result = await fetch(`/api/login`,
@@ -182,46 +182,27 @@
         const res = await result.json()
     }
     const emailField = document.getElementById("imptemail")
-    let isValid = false
-
-    
 
     function testing(){
-        // this.blur()
-        document.getElementById("login").style.backgroundColor="#c3e0c9"
-        // const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-        // console.log(emailField.value)
-        // requestAnimationFrame(function(){
-        //     emailField.style.backgroundColor="#c3e0c9"
-        // })
-        // emailField.value = emailField.value
-        // // emailField.blur()
-        // if(emailPattern.test(emailField.value)){
-        //     this.style.backgroundColor="#c3e0c9"
-        //     isValid = true
-        // }else{
-        //     this.style.backgroundColor = ''
-        //     isValid = false
-        // }
+        const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        if(!emailPattern.test(emailField.value)){
+            this.setCustomValidity("invalid")
+        }
     }
-    function abc(){
-        this.style.backgroundColor="#c3e0c9"
-    }
-    emailField.addEventListener("input",testing)
-    // emailField.addEventListener("change",testing)
-    // emailField.addEventListener("blur",abc)
 
-    // async function emailCheck(){
-    //     const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    //     emailField.style.backgroundColor="#c3e0c9"
-    //     if(emailPattern.test(emailField.value)){
-    //         emailField.style.backgroundColor="#c3e0c9"
-    //     //     // const array = new Uint8Array(8);
-    //     //     // crypto.getRandomValues(array);
-    //     //     // const randomKey = Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
-    //     //     // console.log(randomKey);
-    //     //     // document.cookie=`uid=${randomKey}`
-    //     }
-    // }
-    // console.log(document.cookie)
+    emailField.addEventListener('input',testing)
+
+    async function emailCheck(){
+        const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        console.log(emailField.value)
+        if(emailPattern.test(emailField.value)){
+            const array = new Uint8Array(8);
+            crypto.getRandomValues(array);
+            const randomKey = Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
+            login(randomKey,emailField.value)
+        }else{
+            document.querySelector("input:-webkit-autofill").style.webkitBoxShadow = "0 0 0px 1000px #c3e0c9 inset";
+        }
+    }
+    console.log(document.cookie)
     </script>
