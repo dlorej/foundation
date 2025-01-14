@@ -77,7 +77,7 @@ html,body {
     margin: 0 0 20px 0;
 }
 
-#popup input[type=text]{
+#popup .emailField{
     width: 100%;
     padding: 15px;
     margin: 5px 0 40px 0;
@@ -86,7 +86,7 @@ html,body {
     font-size: 50px;
 }
 
-#popup input[type=text]:focus{
+#popup .emailField:focus{
     background-color: #cfcfcf;
     outline: none;
 }
@@ -96,15 +96,16 @@ input:-webkit-autofill:focus:valid,
 input:-webkit-autofill:active:valid {
     -webkit-box-shadow: 0 0 0px 1000px #c3e0c9 inset;
   } */
-#popup button{
+/* #popup button.submit{
+    
+} */
+#popup #login{
+    margin-bottom: 10px;
     font-size: 50px;
     padding: 5px 20px;
     margin-left: 50%;
     transform: translateX(-50%);
     display: inline-block;
-}
-#popup #login{
-    margin-bottom: 10px;
 }
 
 #overlay {

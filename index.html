@@ -4,7 +4,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
     <link rel="stylesheet" href="index.css"> 
+    <link rel="stylesheet" href="2faSection.css"> 
 </head>
+
+
 <body>
     <div id="topbar">
         <div id ="blank"></div>
@@ -17,21 +20,24 @@
     </div>
     <div id="overlay" onclick="closeForm(false)"></div>
     <div id="popup">
-        <!-- <label for="matric"><b>Matric Number</b></label> -->
-        <!-- <input id = "matric" type="text" placeholder="Enter Matric Number" name="matric" 
-            pattern="^[a-zA-Z](0[0-9]|1[0-9]|2[0-9])\d{5}[a-zA-Z]$" 
-            oninput="this.value = this.value.toUpperCase()" required> -->
-
-        <!-- <label for="email"><b>Email</b></label> -->
         <input type="text" placeholder="Enter Email" name="email" class="emailField" id="imptemail" required>
-
+        <div id="twofa-section" >
+            <input type="text" class="input-box" maxlength="1" oninput="moveFocus(this, event)" />
+            <input type="text" class="input-box" maxlength="1" oninput="moveFocus(this, event)" />
+            <input type="text" class="input-box" maxlength="1" oninput="moveFocus(this, event)" />
+            <input type="text" class="input-box" maxlength="1" oninput="moveFocus(this, event)" />
+            <input type="text" class="input-box" maxlength="1" oninput="moveFocus(this, event)" />
+        </div>
         <button class="submit" id = "login" onclick="emailCheck()">Login</button>
+        <button class="submit" id = "twofaSubmitButton" onclick="twofaSubmit()">login2</button>
     </div>
-
     <div class="folium-map" id="main_map" ></div>
 </body>
+
+
+<!--script to create map and some unused functions-->
 <script>
-    //section for server logic
+    //Map functions
     var main_map = L.map(
         "main_map",
         {
@@ -50,6 +56,7 @@
     
     tile_layer.addTo(main_map);
     
+    //Get buildings from local file //not in use
     async function upload(){
         fetch('./data/buildingsv3.json').then(response => response.json()).then(
             data =>{for (let key in data["features"]){
@@ -61,7 +68,7 @@
         )
     }
 
-    // upload()
+    //Send buildings from local file to server //completed, not in use
     async function sendFn(encoded_polygon,name){
         var data = {
                         "name":name,
@@ -78,7 +85,10 @@
         const res = await result.json()
         console.log(res["message"])
     }
-
+</script>
+<!--script to get and modify buildings information in server-->
+<script>
+    //get buildings from server database
     async function getPolys(){
         const result = await fetch(
             `/api/getAllPolys`
@@ -100,6 +110,7 @@
     function blank(){
         //blank function for onEachFeature
     }
+
 
     async function deleteBuilding(feature,layer){
         layer.on('click',async function(e){
@@ -152,8 +163,9 @@
         }
     }
     getPolys()
-
-    //section for page logic
+</script>
+<!--script for login functionality-->
+<script>
     function loginPopup(){
         document.getElementById("popup").style.top = "20%"
         document.getElementById("overlay").style.display = "block"
@@ -173,36 +185,85 @@
             "uid":uid,
             "email":email
         }
-        const result = await fetch(`/api/login`,
+        const result = await fetch(`/api/loginStepOne`,
         {
             headers: { Accept: "*/*", "Content-Type": "application/json", },
             method:"POST",
             body: JSON.stringify(data)
         })
         const res = await result.json()
-    }
-    const emailField = document.getElementById("imptemail")
-
-    function testing(){
-        const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-        if(!emailPattern.test(emailField.value)){
-            this.setCustomValidity("invalid")
+        if(res.message == "twofa"){
+            //open twofa elements
+            const twofa = document.querySelector("div#twofa-section")
+            twofa.style.display = 'flex'
+            const twofaButton = document.querySelector("button#twofaSubmitButton")
+            twofaButton.style.display = 'inline-block'
         }
     }
 
-    emailField.addEventListener('input',testing)
+    async function twofaSubmit(uid,email,twofa) {
+        const inputBoxes = document.querySelectorAll('#twofa-section input.input-box');
+        let combinedValue = '';
+        inputBoxes.forEach((box) => {
+            combinedValue += box.value; // Append the value of each input box
+        });
+        
+    }
+
+    const emailField = document.getElementById("imptemail")
 
     async function emailCheck(){
         const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-        console.log(emailField.value)
+        // console.log(emailField.value)
         if(emailPattern.test(emailField.value)){
-            const array = new Uint8Array(8);
-            crypto.getRandomValues(array);
-            const randomKey = Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
-            login(randomKey,emailField.value)
+            if(!document.cookie.split(';').some(cookie => cookie.trim().startsWith('uid='))){
+                const array = new Uint8Array(8);
+                crypto.getRandomValues(array);
+                const randomKey = Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
+                document.cookie = `uid=${randomKey}`
+                login(randomKey,emailField.value)
+            }else{
+                login(getCookie("uid"),emailField.value)
+            }            
         }else{
-            document.querySelector("input:-webkit-autofill").style.webkitBoxShadow = "0 0 0px 1000px #c3e0c9 inset";
+            //invalid email
+            document.querySelector("input:-webkit-autofill").style.webkitBoxShadow = "0 0 0px 1000px #ebb5b5 inset";
         }
     }
+    function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+        return null;
+    }
     console.log(document.cookie)
-    </script>
+
+
+    function moveFocus(currentBox, event) {
+      if (event.target.value.length === 1) {
+        let nextBox = currentBox.nextElementSibling;
+        if (nextBox && nextBox.tagName === 'INPUT') {
+            nextBox.focus();
+        } else{
+            currentBox.blur()
+        }
+      }
+    }
+
+    const inputboxes = document.querySelectorAll('input.input-box');
+    inputboxes.forEach((box) => {
+        box.addEventListener('click', () => {
+            box.focus();
+        });
+
+        box.addEventListener('keydown', (event) => {
+            if (event.key === 'Backspace' && box.value === '') {
+                const previousBox = box.previousElementSibling;
+                if (previousBox && previousBox.tagName === 'INPUT') {
+                    previousBox.focus();
+                    previousBox.value = ''; // Clear the previous box if backspace is pressed on an empty box
+                }
+            }
+        });
+    });
+</script>

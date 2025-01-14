@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    .input-container {
+      display: flex;
+    }
+    .input-box {
+      width: 40px;
+      height: 40px;
+      text-align: center;
+      font-size: 18px;
+      border: 1px solid #ccc;
+      margin-right: 5px;
+      text-transform: uppercase;
+    }
+  </style>
+</head>
+<body>
+  <div class="input-container">
+    <input type="text" class="input-box" maxlength="1" oninput="moveFocus(this, event)" />
+    <input type="text" class="input-box" maxlength="1" oninput="moveFocus(this, event)" />
+    <input type="text" class="input-box" maxlength="1" oninput="moveFocus(this, event)" />
+    <input type="text" class="input-box" maxlength="1" oninput="moveFocus(this, event)" />
+  </div>
+
+  <script>
+    function moveFocus(currentBox, event) {
+      if (event.target.value.length === 1) {
+        let nextBox = currentBox.nextElementSibling;
+        if (nextBox && nextBox.tagName === 'INPUT') {
+          nextBox.focus();
+        } else{
+            currentBox.blur()
+        }
+      }
+    }
+
+    const inputboxes = document.querySelectorAll('input.input-box');
+    inputboxes.forEach((box) => {
+      box.addEventListener('click', () => {
+        box.focus();
+      });
+
+      box.addEventListener('keydown', (event) => {
+        if (event.key === 'Backspace' && box.value === '') {
+          const previousBox = box.previousElementSibling;
+          if (previousBox && previousBox.tagName === 'INPUT') {
+            previousBox.focus();
+            previousBox.value = ''; // Clear the previous box if backspace is pressed on an empty box
+          }
+        }
+      });
+    });
+  </script>
+</body>
+</html>

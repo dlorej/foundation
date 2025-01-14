@@ -1,57 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
     <style>
-        #popup label {
-            display: inline-block;
-            margin: 0 0 20px 0;
+        #main_box{
+            display: inline-flex;
         }
-
-        #popup input[type=text],
-        #popup input[type=password],
-        #popup input[type=tel] {
-            width: 100%;
-            padding: 15px;
-            margin: 5px 0 40px 0;
-            border: none;
-            background: #dedede;
-            font-size: 50px;
+        .input-box {
+            width: 60px;
+            height: 60px;
+            text-align: center;
+            font-size: 18px;
+            border: 1px solid #ccc;
+            margin-right: 10px;
+            padding: 0px;
         }
-
-        #popup input[type=text]:focus,
-        #popup input[type=password]:focus {
-            background-color: #cfcfcf;
-            outline: none;
+        input.input-box:focus{
+            outline: 2px solid black;
         }
-
-        #popup input[type=text]:valid,
-        #popup input[type=password]:valid,
-        #popup input[type=tel]:valid {
-            background-color: palegreen;
-        }
-
-        #popup button {
-            font-size: 50px;
-            padding: 5px 20px;
-            margin-left: 50%;
-            transform: translateX(-50%);
+        div.outlined{
+            outline: 2px solid black;
         }
     </style>
 </head>
-
 <body>
-    <div id="popup">
-        <label for="matric"><b>Matric Number</b></label>
-        <input id="matric" type="text" placeholder="Enter Matric Number" name="matric"
-            pattern="^[a-zA-Z](0[0-9]|1[0-9]|2[0-9])\d{5}[a-zA-Z]$" oninput="this.value = this.value.toUpperCase()"
-            required>
-
-        <label for="email"><b>Email</b></label>
-        <input type="email" placeholder="Enter Email" name="email" required>
-
-        <button class="submit">Login</button>
+    <div id="main_box">
+        <input class="input-box">
+        <div class="input-box"></div>
+        <div class="input-box"></div>
+        <div class="input-box"></div>
     </div>
 </body>
-
+<script>
+    const inputbox = document.querySelector('input.input-box')
+    const boxes = document.querySelectorAll('div.input-box')
+    boxes.forEach((box)=>{
+        box.addEventListener('click',()=>{inputbox.focus()})
+    })
+    inputbox.addEventListener('focus',()=>{
+        boxes.forEach((box)=>{box.classList.add('outlined')})
+    })
+    inputbox.addEventListener('blur',()=>{
+        boxes.forEach((box)=>{box.classList.remove('outlined')})
+    })
+    inputbox.addEventListener('input',()=>{
+        if (inputbox.value.length > 1 && inputbox.value.length <= 4){
+            
+        }
+    })
+</script>
 </html>
