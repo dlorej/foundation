@@ -1,7 +1,6 @@
 #twofa-section {
     display: none;
     width:100%;
-    margin-top: 2vh;
 }
 #twofa-section .input-box {
     width: 30%;
@@ -11,10 +10,9 @@
     border: 1px solid #ccc;
     margin-right: 5%;
     text-transform: uppercase;
+    margin-bottom:3%
+
 }
 #twofa-section .input-box:last-child {
     margin-right: 0%;
-}
-#twofaSubmitButton{
-    display: none;
 }

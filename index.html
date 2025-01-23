@@ -14,13 +14,13 @@
         <div id="logo">
             <img src="/icons/circle.png" alt="logo">
         </div>
-        <div id="login" onclick="loginPopup()">
+        <div id="login_topbar" onclick="loginPopup()">
             Log in
         </div>
     </div>
-    <div id="overlay" onclick="closeForm(false)"></div>
+    <div id="overlay" onclick="closeForm()"></div>
     <div id="popup">
-        <input type="text" placeholder="Enter Email" name="email" class="emailField" id="imptemail" required>
+        <input type="text" placeholder="Enter Email" name="email" class="emailField" id="inputemail" required>
         <div id="twofa-section" >
             <input type="text" class="input-box" maxlength="1" oninput="moveFocus(this, event)" />
             <input type="text" class="input-box" maxlength="1" oninput="moveFocus(this, event)" />
@@ -28,8 +28,7 @@
             <input type="text" class="input-box" maxlength="1" oninput="moveFocus(this, event)" />
             <input type="text" class="input-box" maxlength="1" oninput="moveFocus(this, event)" />
         </div>
-        <button class="submit" id = "login" onclick="emailCheck()">Login</button>
-        <button class="submit" id = "twofaSubmitButton" onclick="twofaSubmit()">login2</button>
+        <button class="submit" id = "login">Login</button>
     </div>
     <div class="folium-map" id="main_map" ></div>
 </body>
@@ -43,15 +42,16 @@
         {
             center: [1.3474574403155464, 103.68459204844389],
             crs: L.CRS.EPSG3857,
-            // maxBounds: [[1.3299, 103.6564], [1.3562, 103.6904]],
-            zoom: 20,
+            maxBounds: [[1.3299, 103.6564], [1.3564, 103.6904]],
+            zoom: 19,
             zoomControl: true,
             preferCanvas: false,
         }
     );
     var tile_layer = L.tileLayer(
         "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
-        {"attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors", "detectRetina": false, "maxNativeZoom": 19, "maxZoom": 19, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
+        {"attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors",
+        "detectRetina": false, "maxNativeZoom": 21, "maxZoom": 21, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
     );
     
     tile_layer.addTo(main_map);
@@ -166,17 +166,82 @@
 </script>
 <!--script for login functionality-->
 <script>
+    const emailField = document.getElementById("inputemail")
+    var emailError = false
+
+    document.querySelector("#popup input#inputemail").addEventListener('input',()=>{
+        if (emailError == true){
+            emailError = false
+            emailField.style.cssText = ''
+        }
+    })
+
     function loginPopup(){
         document.getElementById("popup").style.top = "20%"
         document.getElementById("overlay").style.display = "block"
     }
 
-    function closeForm(submit){
-        if (submit){
+    function closeForm(){
+        document.getElementById("popup").style.top = "-200%"
+        document.getElementById("overlay").style.display = "none"
+    }
 
+    var [saved_uid,saved_email] = getCookie("uid").split("+")
+
+    function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+        return null;
+    }
+
+    const login_button = document.querySelector("div#popup button#login")
+    login_button.addEventListener('click',del)
+
+    async function del(){
+        var data = {
+            "code":"abcde",
+            "email":email
+        }
+        const result = await fetch(`/api/send2fa`,
+        {
+            headers: { Accept: "*/*", "Content-Type": "application/json", },
+            method:"POST",
+            body: JSON.stringify(data)
+        })
+        const res = await result.json()
+    }
+
+    async function emailCheck(){
+        const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        // console.log(emailField.value)
+        if(emailPattern.test(emailField.value)){
+            //valid email
+            if(!document.cookie.split(';').some(cookie => cookie.trim().startsWith('uid='))){
+                //if cookies does not contain uid => generate a random uid, save to cookies, login
+                const array = new Uint8Array(8);
+                crypto.getRandomValues(array);
+                const randomKey = Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
+                document.cookie = `uid=${randomKey}+${emailField.value}`
+                login(randomKey,emailField.value)
+            }else{
+                //if cookies contain uid 
+                if (saved_email == emailField.value){
+                    //if saved email and uid matches => login
+                    login(saved_uid,saved_email)
+                }else{
+                    //if logging in with new email/uid => save new uid/email cookie, login
+                    const array = new Uint8Array(8);
+                    crypto.getRandomValues(array);
+                    const randomKey = Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
+                    document.cookie = `uid=${randomKey}+${emailField.value}`
+                    login(randomKey,emailField.value)
+                }
+            }            
         }else{
-            document.getElementById("popup").style.top = "-200%"
-            document.getElementById("overlay").style.display = "none"
+            //invalid email
+            document.querySelector("input#inputemail").style.webkitBoxShadow = "0 0 0px 1000px #ebb5b5 inset";
+            emailError = true
         }
     }
 
@@ -192,62 +257,53 @@
             body: JSON.stringify(data)
         })
         const res = await result.json()
-        if(res.message == "twofa"){
+
+        if (res.message == "twofa"){
+            console.log("there")
             //open twofa elements
             const twofa = document.querySelector("div#twofa-section")
             twofa.style.display = 'flex'
-            const twofaButton = document.querySelector("button#twofaSubmitButton")
-            twofaButton.style.display = 'inline-block'
+            login_button.removeEventListener('click',emailCheck)
+            login_button.addEventListener('click',twofaSubmit)
+        }else{
+            console.log("here")
+            const user_display = document.getElementById("blank")
+            user_display.innerText = res.party
+            closeForm()
         }
     }
 
-    async function twofaSubmit(uid,email,twofa) {
+    async function twofaSubmit() {
         const inputBoxes = document.querySelectorAll('#twofa-section input.input-box');
         let combinedValue = '';
         inputBoxes.forEach((box) => {
             combinedValue += box.value; // Append the value of each input box
         });
-        
-    }
-
-    const emailField = document.getElementById("imptemail")
-
-    async function emailCheck(){
-        const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-        // console.log(emailField.value)
-        if(emailPattern.test(emailField.value)){
-            if(!document.cookie.split(';').some(cookie => cookie.trim().startsWith('uid='))){
-                const array = new Uint8Array(8);
-                crypto.getRandomValues(array);
-                const randomKey = Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
-                document.cookie = `uid=${randomKey}`
-                login(randomKey,emailField.value)
-            }else{
-                login(getCookie("uid"),emailField.value)
-            }            
-        }else{
-            //invalid email
-            document.querySelector("input:-webkit-autofill").style.webkitBoxShadow = "0 0 0px 1000px #ebb5b5 inset";
+        var data = {
+            "uid":saved_uid,
+            "email":emailField.value,
+            "twofa": combinedValue
         }
+        const result = await fetch(`/api/loginStepTwo`,
+        {
+            headers: { Accept: "*/*", "Content-Type": "application/json", },
+            method:"POST",
+            body: JSON.stringify(data)
+        })
+        const res = await result.json()
+        console.log(res)
     }
-    function getCookie(name) {
-        const value = `; ${document.cookie}`;
-        const parts = value.split(`; ${name}=`);
-        if (parts.length === 2) return parts.pop().split(';').shift();
-        return null;
-    }
-    console.log(document.cookie)
-
 
     function moveFocus(currentBox, event) {
-      if (event.target.value.length === 1) {
-        let nextBox = currentBox.nextElementSibling;
-        if (nextBox && nextBox.tagName === 'INPUT') {
-            nextBox.focus();
-        } else{
-            currentBox.blur()
+        //change this to allow pasting and only allow set focus on first field
+        if (event.target.value.length === 1) {
+            let nextBox = currentBox.nextElementSibling;
+            if (nextBox && nextBox.tagName === 'INPUT') {
+                nextBox.focus();
+            } else{
+                currentBox.blur()
+            }
         }
-      }
     }
 
     const inputboxes = document.querySelectorAll('input.input-box');
