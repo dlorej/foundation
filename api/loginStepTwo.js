@@ -10,19 +10,20 @@ export default async function function1(req,res){
             let [saved_twofa,expiry] = check.rows[0].twofa.split(" + ")
             twofa = twofa.toUpperCase()
             let now = new Date().getTime()
-            console.log(saved_twofa,twofa,now<=expiry)
             if (twofa == saved_twofa && now <= expiry){
-                console.log("test")
+                console.log("2fa matches and not expired, updating database")
                 await sql`UPDATE users SET uid = ${uid} WHERE email = ${email}`
             }
         }
+        console.log(uid,check.rows[0].uid)
         if (uid == check.rows[0].uid){
+            console.log("part2")
             //if uid matches email
             const info = await sql`SELECT inventory,party FROM users WHERE email = ${email}`
-            // console.log(info.rows[0])
+            console.log(info.rows[0])
             return res.status(200).json(info.rows[0])
         } else{
-            return res.status(200).json({message:"fail"})
+            return res.status(200).json({message:"unknown error"})
         }
     } else{
         return res.status(200).json({message:"fail"})

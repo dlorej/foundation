@@ -6,26 +6,28 @@
     <title>Document</title>
 </head>
 <body>
-    <button onclick="sce3()" style="font-size: 50px;">testing</button>
+    <button onclick="sce2()" style="font-size: 50px;">testing</button>
     <div style="font-size: 50px;" onclick="cc(this)">color change</div>
 </body>
 <script>
-    async function sce() {
-        const result = await fetch(
-            `/api/sendConfirmationEmail`
-        )
-    }
     async function sce2() {
-        window.location.href = "/api/gapi3";
+        const url = new URL('api/auth',window.location.origin)
+        console.log(url)
+        window.location.href = url
     }
     async function sce3() {
         const result = await fetch(
-            `/api/gapi3`
+            `/api/auth`
         )
     }
 
     function cc(el){
         el.style.backgroundColor = "blue"
+    }
+    window.onload = function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const code = urlParams.get('code');
+        console.log(code)
     }
 </script>
 </html>

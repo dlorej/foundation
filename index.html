@@ -42,9 +42,9 @@
         {
             center: [1.3474574403155464, 103.68459204844389],
             crs: L.CRS.EPSG3857,
-            maxBounds: [[1.3299, 103.6564], [1.3564, 103.6904]],
+            maxBounds: [[1.3299, 103.6564], [1.3564, 103.6762]],
             zoom: 19,
-            zoomControl: true,
+            zoomControl: false,
             preferCanvas: false,
         }
     );
@@ -196,25 +196,12 @@
     }
 
     const login_button = document.querySelector("div#popup button#login")
-    login_button.addEventListener('click',del)
+    login_button.addEventListener('click',emailCheck)
 
-    async function del(){
-        var data = {
-            "code":"abcde",
-            "email":email
-        }
-        const result = await fetch(`/api/send2fa`,
-        {
-            headers: { Accept: "*/*", "Content-Type": "application/json", },
-            method:"POST",
-            body: JSON.stringify(data)
-        })
-        const res = await result.json()
-    }
 
     async function emailCheck(){
+        console.log("emailcheck",saved_email,saved_uid)
         const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-        // console.log(emailField.value)
         if(emailPattern.test(emailField.value)){
             //valid email
             if(!document.cookie.split(';').some(cookie => cookie.trim().startsWith('uid='))){
@@ -245,6 +232,9 @@
         }
     }
 
+    const user_display = document.getElementById("blank")
+    const twofa = document.querySelector("div#twofa-section")
+
     async function login(uid,email){
         var data = {
             "uid":uid,
@@ -257,17 +247,16 @@
             body: JSON.stringify(data)
         })
         const res = await result.json()
+        //add loading animation while waiting for login 
 
         if (res.message == "twofa"){
             console.log("there")
             //open twofa elements
-            const twofa = document.querySelector("div#twofa-section")
             twofa.style.display = 'flex'
             login_button.removeEventListener('click',emailCheck)
             login_button.addEventListener('click',twofaSubmit)
         }else{
-            console.log("here")
-            const user_display = document.getElementById("blank")
+            console.log("2fa unnecessary, logging in")
             user_display.innerText = res.party
             closeForm()
         }
@@ -291,7 +280,15 @@
             body: JSON.stringify(data)
         })
         const res = await result.json()
-        console.log(res)
+        if (res.message && res.message == "fail"){
+            //only returns fail when there is more than 1 entry with the same email
+            //display error page?
+            window.location.href = "/pages/errorpage.html";
+        } else{
+            user_display.innerText = res.party
+            closeForm()
+            twofa.style.display = 'none'
+        }
     }
 
     function moveFocus(currentBox, event) {

@@ -7,10 +7,10 @@ export default async function function1(req,res){
     var {uid,email} = req.body
 
     const check = await sql`SELECT uid FROM users WHERE email = ${email}`
-    console.log(check.rows)
     if (check.rows.length == 1){
         //if email in database
         if (uid == check.rows[0].uid){
+            console.log("email matches")
             //if uid matches email => request user info from steptwo => !!send back user info to page!!(not done)
             var data = {
                 "email":email,
@@ -24,6 +24,7 @@ export default async function function1(req,res){
                 body: JSON.stringify(data)
             })
             const steptworesponse = await steptwo.json()
+            console.log("step2response",steptworesponse)
             //response = user info
             return res.status(200).json(steptworesponse)
 

@@ -118,4 +118,4 @@ input:-webkit-autofill:active:valid {
     background: #00000080; /* Darken effect */
     z-index: 9998; /* Below the popup but above the map */
     display: none; /* Hidden by default */
-  }
+}
