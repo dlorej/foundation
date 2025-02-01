@@ -1,3 +1,16 @@
-keep user logged in
 team: points?, buildings, coins, members
 central log, logins, geotags
+allow picking of team name
+allow pasting of 2fa
+encrypt cookies
+change line thickness of buildings based on level of zoom
+add loading animation during login
+
+!! focus now !!
+recognise team control of buildings
+
+next step:
+
+Done:
+1. keep user logged in
+2. get team num from cookies, change state in table to team num, change color based on team num

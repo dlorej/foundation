@@ -42,7 +42,7 @@
         {
             center: [1.3474574403155464, 103.68459204844389],
             crs: L.CRS.EPSG3857,
-            maxBounds: [[1.3299, 103.6564], [1.3564, 103.6762]],
+            maxBounds: [[1.3299, 103.6764], [1.3564, 103.6904]],
             zoom: 19,
             zoomControl: false,
             preferCanvas: false,
@@ -51,7 +51,7 @@
     var tile_layer = L.tileLayer(
         "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
         {"attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors",
-        "detectRetina": false, "maxNativeZoom": 21, "maxZoom": 21, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
+        "detectRetina": false, "maxNativeZoom": 19, "maxZoom": 20, "minZoom": 16, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
     );
     
     tile_layer.addTo(main_map);
@@ -86,9 +86,52 @@
         console.log(res["message"])
     }
 </script>
+
+<!--script for gameplay--> 
+<script>
+    async function claim_building(e){
+        if (e.target.feature && e.target.feature.properties.buildingID){
+            if (e.target.feature.properties.state > 0){
+                var party = 0
+            }else if (e.target.feature.properties.state == 0){
+                var party = parseInt(getCookie("uInfo")) || 0
+            }else{
+                console.log('fail')
+                return
+            }
+            
+            var data = {
+                "command":"claimBuilding",
+                "info":{
+                    "buildingID":e.target.feature.properties.buildingID,
+                    "party":party
+                }
+            }
+
+            const result = await fetch(`/api/gameFunctions`,
+            {
+                headers: { Accept: "*/*", "Content-Type": "application/json", },
+                method:"POST",
+                body: JSON.stringify(data)
+            })
+            const res = await result.json()
+
+            if (res.message == "works"){
+                console.log(e.target.feature.properties.state)
+                e.target.feature.properties.state = party
+                // console.log(diff(e.target.feature))
+                e.target.setStyle(diff(e.target.feature))
+            }
+        }
+    }
+</script>
+
 <!--script to get and modify buildings information in server-->
 <script>
     //get buildings from server database
+
+    var allbuildings = ["one"]
+
     async function getPolys(){
         const result = await fetch(
             `/api/getAllPolys`
@@ -98,22 +141,30 @@
             var poly = JSON.parse(res["message"][i].boundary)
             var state = res["message"][i].state
             var name = res["message"][i].name
+            var buildingID = res["message"][i].buildingid
             var featureObj = {"type":"Feature",
                 "geometry":
                     {"type":"MultiPolygon","coordinates":poly},
                 "properties":
-                    {"state":state,"name":name}
+                    {"state":state,"name":name,"buildingID":buildingID}
             }
-            L.geoJSON(featureObj,{onEachFeature:blank,style:diff,filter:filter}).addTo(main_map)
+            
+            //style:diff sets the color of the building based on state
+            //filter:filter hides building based on state
+            var buildinglayer = L.geoJSON(featureObj,{onEachFeature:deleteBuilding,style:diff,filter:filter})
+            // buildinglayer.bindPopup(name)
+            allbuildings.push(buildinglayer)
+            buildinglayer.addTo(main_map)
         }
+        return "loaded"
     }
+
     function blank(){
         //blank function for onEachFeature
     }
 
-
     async function deleteBuilding(feature,layer){
-        layer.on('click',async function(e){
+        layer.on('click',async function(e){  
             const temp = e.target.feature
             const success = await changeStateFn(temp.properties.name,JSON.stringify(temp.geometry.coordinates))
             if (success){
@@ -130,9 +181,9 @@
 
     async function changeStateFn(name,poly){
         var data = {
-                        "name":name,
-                        "poly":poly
-                    }
+            "name":name,
+            "poly":poly
+        }
         
         const result = await fetch(`/api/changeState`,
         {
@@ -151,18 +202,33 @@
     function diff(feature){
         switch (feature.properties.state) {
             case 0: return {color: "#3388FF"}; //blue
-            case -1:   return {color: "red"};
+            case -1: return {color: "red"};
+            case 2: return {color: "green"};
         }
+        // if(feature.properties.name == ""){
+        //     return {color: "green"}
+        // }else{
+        //     return {color: "#3388FF"}
+        // }
     }
 
     function filter(feature){
-        if (feature.properties.state == -1) {
-            return false
-        } else{
-            return true
-        }
+        return true
+        // if (feature.properties.state == -1) {
+        //     return false
+        // } else{
+        //     return true
+        // }
     }
-    getPolys()
+
+    getPolys().then(()=>{
+        main_map.eachLayer(layer => {
+            if (!layer._url){
+                layer.off("click")
+                layer.on('click',claim_building)
+            }
+        })
+    })
 </script>
 <!--script for login functionality-->
 <script>
@@ -186,7 +252,8 @@
         document.getElementById("overlay").style.display = "none"
     }
 
-    var [saved_uid,saved_email] = getCookie("uid").split("+")
+    var [saved_uid, saved_email] = (getCookie("uid") || "+").split("+");
+
 
     function getCookie(name) {
         const value = `; ${document.cookie}`;
@@ -205,11 +272,16 @@
         if(emailPattern.test(emailField.value)){
             //valid email
             if(!document.cookie.split(';').some(cookie => cookie.trim().startsWith('uid='))){
+                console.log("no cookie saved")
                 //if cookies does not contain uid => generate a random uid, save to cookies, login
                 const array = new Uint8Array(8);
                 crypto.getRandomValues(array);
                 const randomKey = Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
-                document.cookie = `uid=${randomKey}+${emailField.value}`
+
+                const now = new Date();
+                const later = new Date(now.getTime() + 365 * 24 * 60 * 60 * 1000)
+                document.cookie = `uid=${randomKey}+${emailField.value};expires=${later.toUTCString()}`
+                // console.log()
                 login(randomKey,emailField.value)
             }else{
                 //if cookies contain uid 
@@ -221,7 +293,10 @@
                     const array = new Uint8Array(8);
                     crypto.getRandomValues(array);
                     const randomKey = Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
-                    document.cookie = `uid=${randomKey}+${emailField.value}`
+
+                    const now = new Date();
+                    const later = new Date(now.getTime() + 365 * 24 * 60 * 60 * 1000)
+                    document.cookie = `uid=${randomKey}+${emailField.value};expires=${later.toUTCString()}`
                     login(randomKey,emailField.value)
                 }
             }            
@@ -235,7 +310,8 @@
     const user_display = document.getElementById("blank")
     const twofa = document.querySelector("div#twofa-section")
 
-    async function login(uid,email){
+    async function login(uid,email,hidden=false){
+        console.log("uid",uid)
         var data = {
             "uid":uid,
             "email":email
@@ -247,22 +323,31 @@
             body: JSON.stringify(data)
         })
         const res = await result.json()
-        //add loading animation while waiting for login 
+        //add loading animation while waiting for login !!not done
 
         if (res.message == "twofa"){
-            console.log("there")
+            if (hidden){
+                return false
+            }
             //open twofa elements
             twofa.style.display = 'flex'
             login_button.removeEventListener('click',emailCheck)
             login_button.addEventListener('click',twofaSubmit)
         }else{
+            //add cookie representing party
+            document.cookie = `uInfo=${res.party}`
+            if (hidden){
+                return res
+            }
             console.log("2fa unnecessary, logging in")
             user_display.innerText = res.party
             closeForm()
+            
         }
     }
 
     async function twofaSubmit() {
+        var [saved_uid, saved_email] = (getCookie("uid") || "+").split("+");
         const inputBoxes = document.querySelectorAll('#twofa-section input.input-box');
         let combinedValue = '';
         inputBoxes.forEach((box) => {
@@ -290,7 +375,21 @@
             twofa.style.display = 'none'
         }
     }
+    
+    window.onload = async() => {
+        var [saved_uid, saved_email] = (getCookie("uid") || "+").split("+");
+        if (saved_uid != "" && saved_email != ""){
+            var prelogin = await login(saved_uid,saved_email,true)
+            if (prelogin){
+                user_display.innerText = prelogin.party
+                document.querySelector("div#login_topbar").innerText = "Log Out"
+            }           
+        }
+    }
+</script>
 
+<!--script for UI-->
+<script>
     function moveFocus(currentBox, event) {
         //change this to allow pasting and only allow set focus on first field
         if (event.target.value.length === 1) {
@@ -320,3 +419,4 @@
         });
     });
 </script>
+

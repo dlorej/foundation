@@ -1,0 +1,90 @@
+<head>
+    <style>
+        body{
+            height: 100vh;
+            width: 100vh;
+            
+        }
+        .grid{
+            display: grid;
+            grid-template-columns: repeat(9, 65px);
+            grid-template-rows: repeat(9, 65px);
+        }
+        .cell{
+            width: 65px;
+            height: 65px;
+            display: flex;
+        }
+    </style>
+</head>
+<body>
+    <div class="grid">
+    </div>
+    
+</body>
+<script>
+    const gridElem = document.querySelector(".grid")
+    function HSVtoRGB(h, s, v) {
+        var r, g, b, i, f, p, q, t;
+        if (arguments.length === 1) {
+            s = h.s, v = h.v, h = h.h;
+        }
+        i = Math.floor(h * 6);
+        f = h * 6 - i;
+        p = v * (1 - s);
+        q = v * (1 - f * s);
+        t = v * (1 - (1 - f) * s);
+        switch (i % 6) {
+            case 0: r = v, g = t, b = p; break;
+            case 1: r = q, g = v, b = p; break;
+            case 2: r = p, g = v, b = t; break;
+            case 3: r = p, g = q, b = v; break;
+            case 4: r = t, g = p, b = v; break;
+            case 5: r = v, g = p, b = q; break;
+        }
+        return (`RGB(${Math.round(r * 255)},${Math.round(g * 255)},${Math.round(b * 255)})`)
+    }
+    
+    for (let x = 0; x < 360; x+=10){
+        switch(x % 30){
+            case 10: var br = 1; break;
+            case 20: var br = 0.85; break;
+            case 0: var br = 0.7; break;
+        }
+        var temp = document.createElement("div")
+        temp.classList.add("cell")
+        temp.dataset.value=x
+        var col = HSVtoRGB(x/360,1,br)
+        temp.style.backgroundColor = col
+        gridElem.appendChild(temp)
+    }
+    // let grouped = false;
+    document.body.addEventListener('click', () => {
+        const cells = Array.from(gridElem.children);
+        let currentIndex = cells.length;
+        while (currentIndex != 0) {
+
+            // Pick a remaining element...
+            let randomIndex = Math.floor(Math.random() * currentIndex);
+            currentIndex--;
+
+            // And swap it with the current element.
+            [cells[currentIndex], cells[randomIndex]] = [
+            cells[randomIndex], cells[currentIndex]];
+        }
+        gridElem.innerHTML = ''
+        cells.forEach(cell=>gridElem.appendChild(cell))
+        // if (!grouped) {
+        //     const wholeNumbers = cells.filter(cell => Number(cell.dataset.value) % 25 === 0);
+        //     const decimals = cells.filter(cell => Number(cell.dataset.value) % 25 !== 0);
+        //     gridElem.innerHTML = ''; // Clear grid
+        //     wholeNumbers.forEach(cell => gridElem.appendChild(cell));
+        //     decimals.forEach(cell => gridElem.appendChild(cell));
+        // }else{
+        //     const sorted = cells.sort((a, b) => Number(a.dataset.value) - Number(b.dataset.value));
+        //     gridElem.innerHTML = ''; // Clear grid
+        //     sorted.forEach(cell => gridElem.appendChild(cell));
+        // }
+        // grouped = !grouped; // Toggle grouped state
+    })
+</script>

@@ -2,6 +2,7 @@ import {sql} from "@vercel/postgres"
 
 export default async function function1(req,res){
     var {uid,email,twofa=null} = req.body
+    console.log("uid",uid)
 
     const check = await sql`SELECT * FROM users WHERE email = ${email}`
     if (check.rows.length == 1){

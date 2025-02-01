@@ -2,7 +2,7 @@ import { google } from 'googleapis';
 
 export default async function handler(req, res) {
     var {recipient,code} = req.body
-    // console.log(recipient,code)
+    console.log("2fa",recipient,code)
 
     const CLIENT_ID = process.env.google_client_id;
     const CLIENT_SECRET = process.env.google_client_secret;
