@@ -10,6 +10,7 @@ add loading animation during login
 recognise team control of buildings
 
 next step:
+resolve vercel google incompatability
 
 Done:
 1. keep user logged in

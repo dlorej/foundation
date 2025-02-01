@@ -29,6 +29,7 @@ export default async function function1(req,res){
             return res.status(200).json(steptworesponse)
 
         }else if(uid != check.rows[0].uid){
+            console.log("2fa step")
             //if uid does not match email => send 2fa code to email, get page to display 2fa input
             const randomKey = Array.from({ length: 5 }, () => Math.floor(Math.random() * 36).toString(36)).join('').toUpperCase()
 
@@ -39,6 +40,7 @@ export default async function function1(req,res){
                 "recipient":email,
                 "code":`${randomKey}`
             }
+            
             const url = new URL('/api/send2fa', `http://${req.headers.host}`);
             const gapi_reply = await fetch(url,
             {
