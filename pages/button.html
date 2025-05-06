@@ -6,7 +6,7 @@
     <title>Document</title>
 </head>
 <body>
-    <button onclick="sce2()" style="font-size: 50px;">testing</button>
+    <button onclick="sce4()" style="font-size: 50px;">testing</button>
     <div style="font-size: 50px;" onclick="cc(this)">color change</div>
 </body>
 <script>
@@ -17,17 +17,32 @@
     }
     async function sce3() {
         const result = await fetch(
-            `/api/auth`
+            `/api/send2fa`
         )
     }
 
     function cc(el){
         el.style.backgroundColor = "blue"
     }
+
+    async function sce4(){
+        var data = {
+            "recipient":"jeroldlimjunpin@gmail.com",
+            "code":`abcdef`
+        }
+        const url = new URL('/api/send2fa', window.location.origin);
+        const gapi_reply = await fetch(url,
+        {
+            headers: { Accept: "*/*", "Content-Type": "application/json", },
+            method:"POST",
+            body: JSON.stringify(data)
+        })
+    }
     window.onload = function() {
         const urlParams = new URLSearchParams(window.location.search);
         const code = urlParams.get('code');
-        console.log(code)
+        console.log(code||"currently not trying to access google")
+
     }
 </script>
 </html>

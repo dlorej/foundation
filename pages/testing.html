@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pink Background with Clickable Div</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: pink;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: Arial, sans-serif;
+            color: #333;
+            text-align: center;
+        }
+        
+        .clickable-div {
+            position: absolute;
+            z-index: 10;
+            width: 200px;
+            height: 100px;
+            background-color: rgba(255, 255, 255, 0.7);
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .clickable-div:hover {
+            background-color: rgba(255, 255, 255, 0.9);
+        }
+    </style>
+</head>
+<body>
+    <div class="dummy-text">
+        <h1>Dummy Background</h1>
+        <p>This is a full-page pink background with some dummy text.</p>
+    </div>
+    
+    <div class="clickable-div" onclick="window.open('https://www.google.com', '_blank')">
+        Click me to open Google
+    </div>
+</body>
+</html>

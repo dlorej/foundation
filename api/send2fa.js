@@ -26,27 +26,28 @@ export default async function handler(req, res) {
     })
 
     const { token } = await oauth2Client.getAccessToken()
-    oauth2Client.setCredentials({
-        access_token: `${token}`
-    });
-    const gmail = google.gmail({version: 'v1', auth: oauth2Client});
+    console.log(token)
+    // oauth2Client.setCredentials({
+    //     access_token: `${token}`
+    // });
+    // const gmail = google.gmail({version: 'v1', auth: oauth2Client});
 
-    const emailLines = [
-        'From: jeroldlimjunpin@gmail.com',
-        `To: ${recipient}`,
-        'Content-type: text/html;charset=utf-8',
-        'Subject: [NonUniform] Your Access Code',
-        '',
-        `<p>Your Access Code: <span style="font-size: 24px;">${code}</span></p>`
-    ];
-    const email = emailLines.join('\r\n').trim();
-    const b64 = btoa(email).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
-    gmail.users.messages.send({
-        userId: 'me',
-        resource: {
-            raw: b64
-        }
-    }).then(()=>{
-        return res.status(200).json({message:"done"})
-    });    
+    // const emailLines = [
+    //     'From: jeroldlimjunpin@gmail.com',
+    //     `To: ${recipient}`,
+    //     'Content-type: text/html;charset=utf-8',
+    //     'Subject: [NonUniform] Your Access Code',
+    //     '',
+    //     `<p>Your Access Code: <span style="font-size: 24px;">${code}</span></p>`
+    // ];
+    // const email = emailLines.join('\r\n').trim();
+    // const b64 = btoa(email).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
+    // gmail.users.messages.send({
+    //     userId: 'me',
+    //     resource: {
+    //         raw: b64
+    //     }
+    // }).then(()=>{
+    //     return res.status(200).json({message:"done"})
+    // });    
 }
