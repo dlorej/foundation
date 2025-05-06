@@ -23,7 +23,7 @@ html,body {
     position: relative;
 }
 #topbar{
-    z-index: 9999;
+    z-index: 999;
     height: 6vh;
     width: 100%;
     display: grid;
@@ -116,6 +116,6 @@ input:-webkit-autofill:active:valid {
     width: 100%;
     height: 100%;
     background: #00000080; /* Darken effect */
-    z-index: 9998; /* Below the popup but above the map */
+    z-index: 998; /* Below the popup but above the map */
     display: none; /* Hidden by default */
 }
