@@ -3,48 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pink Background with Clickable Div</title>
+    <title>Horizontal Scrolling Divs</title>
     <style>
         body {
             margin: 0;
             padding: 0;
-            background-color: pink;
+            overflow-x: auto;
+            overflow-y: hidden;
+            white-space: nowrap;
             height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-family: Arial, sans-serif;
-            color: #333;
-            text-align: center;
+            scroll-snap-type: x mandatory;
         }
         
-        .clickable-div {
-            position: absolute;
-            z-index: 10;
-            width: 200px;
-            height: 100px;
-            background-color: rgba(255, 255, 255, 0.7);
-            border-radius: 10px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        .color-panel {
+            display: inline-block;
+            width: 25vw;
+            height: 100vh;
+            scroll-snap-align: start;
         }
         
-        .clickable-div:hover {
-            background-color: rgba(255, 255, 255, 0.9);
-        }
+        /* Different colors for each div */
+        .panel-1 { background-color: #FF5733; }
+        .panel-2 { background-color: #33FF57; }
+        .panel-3 { background-color: #3357FF; }
+        .panel-4 { background-color: #F033FF; }
+        .panel-5 { background-color: #FF33F0; }
+        .panel-6 { background-color: #33FFF0; }
+        .panel-7 { background-color: #F0FF33; }
+        .panel-8 { background-color: #8A33FF; }
+        .panel-9 { background-color: #FF8A33; }
+        .panel-10 { background-color: #33FF8A; }
     </style>
 </head>
 <body>
-    <div class="dummy-text">
-        <h1>Dummy Background</h1>
-        <p>This is a full-page pink background with some dummy text.</p>
-    </div>
-    
-    <div class="clickable-div" onclick="window.open('https://www.google.com', '_blank')">
-        Click me to open Google
-    </div>
+    <div class="color-panel panel-1"></div>
+    <div class="color-panel panel-2"></div>
+    <div class="color-panel panel-3"></div>
+    <div class="color-panel panel-4"></div>
+    <div class="color-panel panel-5"></div>
+    <div class="color-panel panel-6"></div>
+    <div class="color-panel panel-7"></div>
+    <div class="color-panel panel-8"></div>
+    <div class="color-panel panel-9"></div>
+    <div class="color-panel panel-10"></div>
 </body>
 </html>
