@@ -11,15 +11,15 @@
             overflow-x: auto;
             overflow-y: hidden;
             white-space: nowrap;
-            height: 100vh;
-            scroll-snap-type: x mandatory;
+            height: 102vh;
+            /* scroll-snap-type: x mandatory; */
         }
         
         .color-panel {
             display: inline-block;
             width: 25vw;
             height: 100vh;
-            scroll-snap-align: start;
+            /* scroll-snap-align: start; */
         }
         
         /* Different colors for each div */
@@ -47,4 +47,19 @@
     <div class="color-panel panel-9"></div>
     <div class="color-panel panel-10"></div>
 </body>
+
+<script>
+    const main = document.getElementsByTagName("body")
+    main.addEventListener("scroll",scrollfn)
+
+    function scrollfn(){
+        if (window.screenY > 1){
+            window.screenY = 1
+            window.screenX += 1
+        } else if (window.screenY < 1){
+            window.screenX = 1
+            window.screenX -= 1
+        }
+    }
+</script>
 </html>
