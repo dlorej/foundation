@@ -12,16 +12,22 @@
             overflow-y: hidden;
             white-space: nowrap;
             height: 100vh;
-            scroll-snap-type: x mandatory;
+            /* scroll-snap-type: x mandatory; */
         }
         #holder{
+            font-size: 0;
             left: 0;
             position: relative;
+            margin: 0;
+            padding: 0;
         }
         .color-panel {
             display: inline-block;
             width: 300px;
             height: 100vh;
+            margin: 0;
+            padding: 0;
+            border: none;
             /* scroll-snap-align: start; */
         }
         
@@ -59,12 +65,38 @@
     console.log(main_max)
     main.addEventListener("wheel",(event)=>{
         var currentLeft = parseInt(main.style.left || "0", 10);
-        var newpos = currentLeft - event.deltaY + 2
+        var newpos = currentLeft - event.deltaY
+        // var newpos = currentLeft - 100
         console.log(newpos,main_max-window.innerWidth)
-        if (-newpos >= 0 && -newpos <= main_max-window.innerWidth){
+        if (-newpos >= 0 && -newpos < main_max-window.innerWidth+1){
             main.style.left = newpos + "px"; // Subtract 100px
         }
     })
+    async function getData() {
+        var data = {
+            "orderid":2025051100001
+        }
+        const result = await fetch(`/api/test_order`,
+            {
+                headers: { Accept: "*/*", "Content-Type": "application/json", },
+                method:"POST",
+                body: JSON.stringify(data)
+            }
+        )
+        const res = await result.json()
+        if (res.message == "success"){
+            const order_items = res.content
+            console.log(order_items)
+        }
+    }
+    await getData()
+    // const result = await fetch(`/api/test_order`,
+    //     {
+    //         headers: { Accept: "*/*", "Content-Type": "application/json", },
+    //         method:"POST",
+    //         body: JSON.stringify(data)
+    //     })
+    //     const res = await result.json()
 
 </script>
 </html>
