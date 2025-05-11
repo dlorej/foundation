@@ -87,15 +87,13 @@
         console.log(res)
 
         if (res.message == "success"){
-            const order_items = res.content
+            const order_items = JSON.parse(res.content.items)
             console.log(order_items)
-            const item_json = JSON.parse(order_items)
-            console.log(item_json)
 
             const item_summary = {}
             const total_price = 0
 
-            for (var key in item_json){
+            for (var key in order_items){
                 const result2 = await fetch(`/api/menu_check`,
                     {
                         headers: { Accept: "*/*", "Content-Type": "application/json", },
@@ -108,8 +106,8 @@
 
                 var item_name = reply.item_name
                 var item_price = reply.item_price
-                item_summary[item_name] = item_json[key]
-                total_price += (item_price * item_json[key])
+                item_summary[item_name] = order_items[key]
+                total_price += (item_price * order_items[key])
             }
             console.log(item_summary)
             console.log(total_price)
