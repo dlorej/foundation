@@ -89,7 +89,7 @@
             console.log(order_items)
         }
     }
-    await getData()
+    window.onload = async() => {await getData()}
     // const result = await fetch(`/api/test_order`,
     //     {
     //         headers: { Accept: "*/*", "Content-Type": "application/json", },
