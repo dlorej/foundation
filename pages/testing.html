@@ -84,6 +84,7 @@
             }
         )
         const res = await result.json()
+        console.log(res)
         if (res.message == "success"){
             const order_items = res.content
             console.log(order_items)
