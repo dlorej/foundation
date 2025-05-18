@@ -62,12 +62,12 @@
 <script>
     const main = document.querySelector("#holder")
     const main_max = main.scrollWidth
-    console.log(main_max)
+    // console.log(main_max)
     main.addEventListener("wheel",(event)=>{
         var currentLeft = parseInt(main.style.left || "0", 10);
         var newpos = currentLeft - event.deltaY
         // var newpos = currentLeft - 100
-        console.log(newpos,main_max-window.innerWidth)
+        // console.log(newpos,main_max-window.innerWidth)
         if (-newpos >= 0 && -newpos < main_max-window.innerWidth+1){
             main.style.left = newpos + "px"; // Subtract 100px
         }
@@ -86,32 +86,33 @@
         const res = await result.json()
         console.log(res)
 
-        // if (res.message == "success"){
-        //     const order_items = JSON.parse(res.content.items)
-        //     console.log(order_items)
+        if (res.message == "success"){
+            const order_items = JSON.parse(res.content.items)
+            console.log(order_items)
 
-        //     const item_summary = {}
-        //     const total_price = 0
+            // const item_summary = {}
+            const total_price = 0
 
-        //     for (var key in order_items){
-        //         const result2 = await fetch(`/api/menu_check`,
-        //             {
-        //                 headers: { Accept: "*/*", "Content-Type": "application/json", },
-        //                 method:"POST",
-        //                 body: JSON.stringify(data)
-        //             }
-        //         )
-        //         var reply = await result2.json()
-        //         console.log(reply)
+            for (var key in order_items){
+                console.log("key",key)
+                const result2 = await fetch(`/api/menu_check`,
+                    {
+                        headers: { Accept: "*/*", "Content-Type": "application/json", },
+                        method:"POST",
+                        body: JSON.stringify(key)
+                    }
+                )
+                var reply = await result2.json()
+                console.log("reply3",reply)
 
-        //         var item_name = reply.item_name
-        //         var item_price = reply.item_price
-        //         item_summary[item_name] = order_items[key]
-        //         total_price += (item_price * order_items[key])
-        //     }
-        //     console.log(item_summary)
-        //     console.log(total_price)
-        // }
+                // var item_name = reply.item_name
+                var item_price = reply.item_price
+                // item_summary[item_name] = order_items[key]
+                total_price += (item_price * order_items[key])
+            }
+            // console.log(item_summary)
+            console.log("total price",total_price)
+        }
     }
     window.onload = async() => {await getData()}
     // const result = await fetch(`/api/test_order`,
