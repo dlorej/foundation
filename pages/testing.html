@@ -72,46 +72,51 @@
             main.style.left = newpos + "px"; // Subtract 100px
         }
     })
-    async function getData() {
-        var data = {
-            "orderid":2025051100001
+    async function getData(test = false) {
+        if (test == true){
+            console.log("test")
+            var res = {'message':'success',content:'{"Chicken":3, "Beef":6}'}
         }
-        const result = await fetch(`/api/test_order`,
-            {
-                headers: { Accept: "*/*", "Content-Type": "application/json", },
-                method:"POST",
-                body: JSON.stringify(data)
+        if (res === undefined){
+            console.log("running")
+            var data = {
+                "orderid":2025051100001
             }
-        )
-        const res = await result.json()
+            const result = await fetch(`/api/test_order`,
+                {
+                    headers: { Accept: "*/*", "Content-Type": "application/json", },
+                    method:"POST",
+                    body: JSON.stringify(data)
+                }
+            )
+            const res = await result.json()
+        }
         console.log(res)
 
         if (res.message == "success"){
-            const order_items = JSON.parse(res.content.items)
+            console.log(res.content)
+            const order_items = JSON.parse(res.content)
             console.log(order_items)
 
-            // const item_summary = {}
-            const total_price = 0
+                const item_summary = {}
+                const total_price = 0
 
-            for (var key in order_items){
-                console.log("key",key)
-                const result2 = await fetch(`/api/menu_check`,
-                    {
-                        headers: { Accept: "*/*", "Content-Type": "application/json", },
-                        method:"POST",
-                        body: JSON.stringify(key)
-                    }
-                )
-                var reply = await result2.json()
-                console.log("reply3",reply)
+                for (var key in order_items){
+                    console.log("key",key)
+                    const result2 = await fetch(`/api/menu_check`,
+                        {
+                            headers: { Accept: "*/*", "Content-Type": "application/json", },
+                            method:"POST",
+                            body: JSON.stringify(key)
+                        }
+                    )
+                    var reply = await result2.json()
+                    console.log("reply3",reply)
 
-                // var item_name = reply.item_name
-                var item_price = reply.item_price
-                // item_summary[item_name] = order_items[key]
-                total_price += (item_price * order_items[key])
-            }
-            // console.log(item_summary)
-            console.log("total price",total_price)
+                    var item_price = reply.item_price
+                    total_price += (item_price * order_items[key])
+                }
+                console.log("total price",total_price)
         }
     }
     window.onload = async() => {await getData()}
